@@ -114,7 +114,7 @@ func HandleRegister(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "User already exists", http.StatusBadRequest)
 		return
 	}
-	if err != sql.ErrNoRows && err != nil {
+	if err != sql.ErrNoRows {
 		http.Error(w, "Server error", http.StatusInternalServerError)
 		return
 	}
