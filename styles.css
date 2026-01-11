@@ -57,14 +57,14 @@ body{
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: 0 4px 16px rgba(0,0,0,.06);
-  padding: 32px 28px;
+  padding: 26px 26px;
   transition: all .28s ease;
   position: relative;
 }
 
 /* Logo */
 .logo h1{
-  margin: 0 0 14px 0;
+  margin: 0 0 12px 0;
   font-size: 18px;
   letter-spacing: 0.6px;
   opacity: .9;
@@ -79,7 +79,7 @@ body{
 }
 
 #auth-description{
-  margin: 10px 0 18px 0;
+  margin: 9px 0 14px 0;
   color: var(--muted);
   line-height: 1.4;
 }
@@ -87,7 +87,7 @@ body{
 /* ========== FORM ========== */
 form{
   display: grid;
-  gap: 14px;
+  gap: 11px;
   margin: 0;
 }
 
@@ -138,14 +138,14 @@ input:focus{
 a{
   color: var(--lime);
   text-decoration: none;
-  font-weight: 800;
+  font-weight: 700;
 }
 a:hover{ text-decoration: underline; }
 
 /* Forgot password */
 .forgot{
   text-align: left;
-  margin: 10px 0 8px 0;
+  margin: 7px 0 5px 0;
   font-size: 12px;
   opacity: 1;
   transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0.2s;
@@ -159,7 +159,7 @@ a:hover{ text-decoration: underline; }
 /* Primary button */
 
 #primary-button{
-  margin-top: -19px;
+  margin-top: -17px;
   width: 100%;
   padding: 12px 14px;
   border-radius: 14px;
@@ -191,7 +191,7 @@ a:hover{ text-decoration: underline; }
 
 /* Toggle + guest */
 .toggle-auth, .guest{
-  margin: 14px 0 0 0;
+  margin: 11px 0 0 0;
   color: var(--muted);
   font-size: 14px;
   text-align: center;
@@ -199,14 +199,14 @@ a:hover{ text-decoration: underline; }
 
 /* Social */
 .social-login{
-  margin-top: 18px;
-  padding-top: 16px;
+  margin-top: 14px;
+  padding-top: 13px;
   border-top: 1px solid var(--border);
   text-align: center;
 }
 
 .social-login p{
-  margin: 0 0 12px 0;
+  margin: 0 0 9px 0;
   color: var(--muted);
   font-weight: 600;
   font-size: 14px;
@@ -282,9 +282,9 @@ a:hover{ text-decoration: underline; }
 
 .register-fields{
   display: grid;
-  gap: 14px;
+  gap: 11px;
   margin-top: 0;
-  margin-bottom: 12px;
+  margin-bottom: 9px;
   max-height: 0;
   opacity: 0;
   overflow: hidden;
