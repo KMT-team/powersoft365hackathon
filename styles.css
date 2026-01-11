@@ -6,12 +6,7 @@
   --muted: #A8B3C7;
   --border: #22304B;
 
-  --primary: #3B82F6;
-  --primary-hover: #2563EB;
-  --accent: #22C55E;
   --ring: rgba(59, 130, 246, 0.28);
-
-  --shadow: 0 18px 60px rgba(0,0,0,.45);
   --radius: 18px;
 
   --lime: #9FEF00;
@@ -26,7 +21,6 @@
   --border: #E2E8F0;
 
   --ring: rgba(37, 99, 235, 0.15);
-  --shadow: 0 10px 25px rgba(0,0,0,.08);
 }
 
 /* ========== BASE ========== */
@@ -127,13 +121,6 @@ input:focus{
   box-shadow: 0 0 0 1px var(--ring);
 }
 
-/* Small hint under username */
-.field-hint{
-  margin: 8px 0 0 0;
-  font-size: 13px;
-  color: var(--muted);
-}
-
 /* Links */
 a{
   color: var(--lime);
@@ -228,20 +215,6 @@ a:hover{ text-decoration: underline; }
   border-color: color-mix(in srgb, var(--lime) 45%, var(--border));
 }
 
-[data-theme="light"] .social-login button:hover{
-  border-color: color-mix(in srgb, var(--lime) 45%, var(--border));
-}
-
-.social-btn{
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.social-btn i{
-  font-size: 18px;
-}
-
 .social-icons{
   display: flex;
   justify-content: center;
@@ -267,11 +240,6 @@ a:hover{ text-decoration: underline; }
 
 .icon-btn:hover{
   transform: translateY(-1px);
-  border-color: color-mix(in srgb, var(--lime) 55%, var(--border));
-  background: color-mix(in srgb, var(--lime) 8%, transparent);
-}
-
-[data-theme="light"] .icon-btn:hover{
   border-color: color-mix(in srgb, var(--lime) 55%, var(--border));
   background: color-mix(in srgb, var(--lime) 8%, transparent);
 }
@@ -368,11 +336,6 @@ a:hover{ text-decoration: underline; }
   background: color-mix(in srgb, var(--lime) 12%, transparent);
   border-color: color-mix(in srgb, var(--lime) 60%, var(--border));
   transform: translateY(-1px);
-}
-
-[data-theme="light"] #theme-toggle:hover {
-  background: color-mix(in srgb, var(--lime) 12%, transparent);
-  border-color: color-mix(in srgb, var(--lime) 60%, var(--border));
 }
 
 #theme-toggle i {
