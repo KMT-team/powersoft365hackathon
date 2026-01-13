@@ -1,0 +1,461 @@
+/* ========== THEME TOKENS ========== */
+:root{
+  --bg: #0B1220;
+  --surface: #111A2E;
+  --text: #EAF2FF;
+  --muted: #A8B3C7;
+  --border: #22304B;
+
+  --ring: rgba(59, 130, 246, 0.28);
+  --radius: 18px;
+
+  --lime: #9FEF00;
+  --lime-2: #B7FF2A;
+}
+
+[data-theme="light"] {
+  --bg: #D1D5DB;
+  --surface: #FFFFFF;
+  --text: #0F172A;
+  --muted: #64748B;
+  --border: #E2E8F0;
+
+  --ring: rgba(37, 99, 235, 0.15);
+}
+
+/* ========== BASE ========== */
+*{ box-sizing: border-box; }
+
+body{
+  margin: 0;
+  font-family: "Manrope", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  background:
+    radial-gradient(1200px 800px at 20% 50%, rgba(34,197,94,.12), transparent 70%),
+    radial-gradient(1000px 800px at 80% 50%, rgba(59,130,246,.12), transparent 70%),
+    var(--bg);
+  background-attachment: fixed;
+  color: var(--text);
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 28px 16px;
+  overflow-y: scroll;
+}
+
+
+/* ========== AUTH CARD ========== */
+.auth-box{
+  width: 100%;
+  max-width: 500px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 16px rgba(0,0,0,.06);
+  padding: 26px 26px;
+  transition: all .28s ease;
+  position: relative;
+}
+
+/* Logo */
+.logo h1{
+  margin: 0 0 12px 0;
+  font-size: 18px;
+  letter-spacing: 0.6px;
+  opacity: .9;
+}
+
+/* Title / description */
+#auth-title{
+  margin: 0;
+  font-size: 30px;
+  letter-spacing: -0.3px;
+  line-height: 1.1;
+}
+
+#auth-description{
+  margin: 9px 0 14px 0;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+/* ========== FORM ========== */
+form{
+  display: grid;
+  gap: 11px;
+  margin: 0;
+}
+
+form > div {
+  position: relative;
+}
+
+label{
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.2px;
+  color: color-mix(in srgb, var(--text) 85%, var(--muted));
+}
+
+input{
+  width: 100%;
+  padding: 12px 12px;
+  margin-top: 8px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.20s ease, box-shadow 0.20s ease;
+}
+
+input::placeholder{
+  color: color-mix(in srgb, var(--muted) 80%, transparent);
+}
+
+input:hover{
+  border-color: color-mix(in srgb, var(--lime) 70%, var(--border));
+}
+
+input:focus{
+  border-color: var(--lime);
+  box-shadow: 0 0 0 1px var(--ring);
+}
+
+/* Links */
+a{
+  color: var(--lime);
+  text-decoration: none;
+  font-weight: 700;
+}
+a:hover{ text-decoration: underline; }
+
+/* Forgot password */
+.forgot{
+  text-align: left;
+  margin: 7px 0 5px 0;
+  font-size: 12px;
+  opacity: 1;
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0.2s;
+}
+
+.auth-box[data-mode="register"] .forgot{
+  opacity: 0;
+  transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Primary button */
+
+#primary-button{
+  margin-top: -17px;
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--lime) 60%, transparent);
+  background: var(--lime);
+  color: #071427;
+  font-weight: 800;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform .12s ease, background .12s ease, margin-top .3s ease;
+}
+
+.auth-box[data-mode="register"] #primary-button{
+  margin-top: 10px;
+}
+
+#primary-button:hover{
+  background: var(--lime-2);
+  transform: translateY(-1px);
+}
+
+#primary-button:active{
+  transform: translateY(0px);
+}
+
+[data-theme="light"] #primary-button {
+  color: #000000;
+}
+
+/* Toggle + guest */
+.toggle-auth, .guest{
+  margin: 11px 0 0 0;
+  color: var(--muted);
+  font-size: 14px;
+  text-align: center;
+}
+
+/* Social */
+.social-login{
+  margin-top: 14px;
+  padding-top: 13px;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+
+.social-login p{
+  margin: 0 0 9px 0;
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.social-login button{
+  width: 100%;
+  padding: 11px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,.02);
+  color: var(--text);
+  cursor: pointer;
+  font-weight: 700;
+  margin-top: 10px;
+}
+
+.social-login button:hover{
+  border-color: color-mix(in srgb, var(--lime) 45%, var(--border));
+}
+
+.social-icons{
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.icon-btn{
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: transform .12s ease, border-color .12s ease, background .12s ease;
+}
+
+.icon-btn i{
+  font-size: 20px;
+}
+
+.icon-btn:hover{
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--lime) 55%, var(--border));
+  background: color-mix(in srgb, var(--lime) 8%, transparent);
+}
+
+.accent{
+  color: var(--lime);
+}
+
+.register-fields{
+  display: grid;
+  gap: 11px;
+  margin-top: 0;
+  margin-bottom: 9px;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transform: translateY(12px);
+  transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+              opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.auth-box[data-mode="register"] .register-fields{
+  max-height: 400px;
+  margin-top: -14px;
+  opacity: 1;
+  transform: translateY(0);
+  overflow: visible;
+  transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), 
+              opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.15s, 
+              margin-top 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.1s;
+}
+
+
+.auth-box[data-mode="register"] #primary-button{
+  margin-top: 10px;
+}
+
+.password-field{
+  position: relative;
+}
+
+.password-field input{
+  padding-right: 44px;
+  position: relative;
+  z-index: 1;
+}
+
+.toggle-password{
+  position: absolute;
+  top: 20px;
+  right: 12px;
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0;
+  z-index: 2;
+}
+
+.toggle-password:hover{
+  color: var(--text);
+}
+
+.toggle-password i {
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.toggle-password:active i {
+  opacity: 0.6;
+  transform: scale(0.92);
+}
+
+#theme-toggle {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  box-shadow: none;
+  transition: background 0.2s ease, transform 0.12s ease, border-color 0.2s ease;
+  z-index: 10;
+}
+
+#theme-toggle:hover {
+  background: color-mix(in srgb, var(--lime) 12%, transparent);
+  border-color: color-mix(in srgb, var(--lime) 60%, var(--border));
+  transform: translateY(-1px);
+}
+
+#theme-toggle i {
+  transition: opacity 0.15s ease;
+}
+
+.error {
+  position: absolute;
+  margin: 2px 0 0 0;
+  font-size: 11px;
+  line-height: 1.2;
+  color: #EF4444;
+  text-align: center;
+  width: 100%;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+              transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.error.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+input.error-input {
+  border-color: #EF4444;
+}
+
+/* ========== LIGHT MODE COLOR OVERRIDES ========== */
+[data-theme="light"] a {
+  color: #00b4d8;
+}
+
+[data-theme="light"] input:hover {
+  border-color: #00b4d8 !important;
+}
+
+
+[data-theme="light"] input:focus {
+  border-color: #00b4d8;
+}
+
+[data-theme="light"] #primary-button {
+  border: 1px solid color-mix(in srgb, #00b4d8 60%, transparent);
+  background: #00b4d8;
+  color: #000000;
+}
+
+[data-theme="light"] #primary-button:hover {
+  background: #33c5e3;
+  transform: translateY(-1px);
+}
+
+[data-theme="light"] .social-login button:hover {
+  border-color: #00b4d8 !important;
+}
+
+[data-theme="light"] .icon-btn:hover {
+  border-color: #00b4d8 !important;
+  background: color-mix(in srgb, #00b4d8 8%, transparent);
+}
+
+[data-theme="light"] #theme-toggle:hover {
+  border-color: #00b4d8 !important;
+  background: color-mix(in srgb, #00b4d8 12%, transparent);
+}
+
+[data-theme="light"] .accent {
+  color: #00b4d8;
+}
+
+/* Light mode text colors */
+[data-theme="light"] #auth-description {
+  color: #000000;
+}
+
+[data-theme="light"] .toggle-auth {
+  color: #000000;
+}
+
+[data-theme="light"] .guest {
+  color: #000000;
+}
+
+[data-theme="light"] .social-login {
+  border-top: 1px solid #000000;
+}
+
+[data-theme="light"] .social-login p {
+  color: #000000;
+}
+
+[data-theme="light"] input {
+  border: 1px solid #64748B !important;
+}
+
+[data-theme="light"] input.error-input {
+  border-color: #EF4444 !important;
+}
+
+/* Light mode button styling to match inputs */
+[data-theme="light"] .social-login button {
+  border: 1px solid #64748B !important;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+}
+
+[data-theme="light"] .icon-btn {
+  border: 1px solid #64748B !important;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+}
+
+[data-theme="light"] #theme-toggle {
+  border: 1px solid #64748B !important;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+}
+
+[data-theme="light"] body {
+  background:
+    radial-gradient(1200px 800px at 20% 50%, rgba(34,197,94,.45), transparent 70%),
+    radial-gradient(1000px 800px at 80% 50%, rgba(0,180,216,.65), transparent 70%),
+    var(--bg);
+}

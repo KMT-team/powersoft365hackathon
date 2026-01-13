@@ -1,0 +1,13 @@
+# Environment variables (Sensitive data)
+.env
+
+# Go Binaries (The compiled files)
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+bin/
+
+# OS generated files
+.DS_Store
