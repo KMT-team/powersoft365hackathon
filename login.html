@@ -22,7 +22,7 @@
     </div>
 
     <!-- Title & description (Login default copy) -->
-    <h2 id="auth-title">Welcome, <span class="accent">learner</span>!</h2>
+    <h2 id="auth-title">Welcome, <span class="accent">learner</span>.</h2>
     <p id="auth-description">Sign in or create an account to continue.</p>
 
     <form novalidate>
@@ -160,7 +160,7 @@
       confirmPassword.disabled = false;    
       emailLabel.textContent = "Email";
       authTitle.textContent = "Create your account";
-      authDesc.textContent = "Choose your username wisely!";
+      authDesc.innerHTML = 'And start <span class="accent">learning</span> today.';
       primaryBtn.textContent = "Sign up";
       toggleText.innerHTML = `<a href="#" id="toggle-link">I already have an account</a>`;
       forgotLink.style.display = "none";
