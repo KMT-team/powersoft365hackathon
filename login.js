@@ -1,0 +1,218 @@
+document.addEventListener("DOMContentLoaded", () => {
+  const authBox = document.querySelector(".auth-box");
+  const form = document.querySelector("form");
+  const toggleText = document.getElementById("toggle-text");
+  const emailLabel = document.getElementById("email-label");
+  const authTitle = document.getElementById("auth-title");
+  const authDesc = document.getElementById("auth-description");
+  const primaryBtn = document.getElementById("primary-button");
+  const forgotLink = document.getElementById("forgot-link");
+  const guestLink = document.getElementById("guest-link");
+  const registerUsername = document.querySelector('input[name="username"]');
+  const confirmPassword = document.getElementById("confirm-password-input");
+
+  const themeToggle = document.getElementById("theme-toggle");
+  const themeIcon = themeToggle.querySelector("i");
+  const systemTheme = window.matchMedia("(prefers-color-scheme: light)");
+  let hasManualTheme =
+    localStorage.getItem("theme") === "light" ||
+    localStorage.getItem("theme") === "dark";
+
+  const modeCopy = {
+    login: {
+      emailLabel: "Email or username",
+      title: 'Welcome, <span class="accent">learner</span>.',
+      description: "Sign in or create an account to continue.",
+      primary: "Sign in",
+      toggle: 'New here? <a href="#" id="toggle-link">Create an account</a>',
+      forgotVisible: true,
+    },
+    register: {
+      emailLabel: "Email",
+      title: "Create your free account",
+      description: 'And start <span class="accent">learning</span> today.',
+      primary: "Sign up",
+      toggle: '<a href="#" id="toggle-link">I already have an account</a>',
+      forgotVisible: false,
+    },
+  };
+
+  function updateThemeIcon() {
+    const isLight =
+      document.documentElement.getAttribute("data-theme") === "light";
+    if (isLight) {
+      themeIcon.classList.remove("fa-moon");
+      themeIcon.classList.add("fa-sun");
+    } else {
+      themeIcon.classList.remove("fa-sun");
+      themeIcon.classList.add("fa-moon");
+    }
+  }
+
+  function applyTheme(theme) {
+    if (theme === "light") {
+      document.documentElement.setAttribute("data-theme", "light");
+    } else {
+      document.documentElement.removeAttribute("data-theme");
+    }
+    updateThemeIcon();
+  }
+
+  function initTheme() {
+    const storedTheme = localStorage.getItem("theme");
+    if (storedTheme === "light" || storedTheme === "dark") {
+      applyTheme(storedTheme);
+      return;
+    }
+    applyTheme(systemTheme.matches ? "light" : "dark");
+  }
+
+  function setMode(mode) {
+    const copy = modeCopy[mode];
+    if (!copy) return;
+
+    authBox.dataset.mode = mode;
+    emailLabel.textContent = copy.emailLabel;
+    authTitle.innerHTML = copy.title;
+    authDesc.innerHTML = copy.description;
+    primaryBtn.textContent = copy.primary;
+    toggleText.innerHTML = copy.toggle;
+    forgotLink.style.display = copy.forgotVisible ? "inline" : "none";
+
+    registerUsername.disabled = mode !== "register";
+    confirmPassword.disabled = mode !== "register";
+  }
+
+  function showError(fieldName, message) {
+    const errorEl = document.querySelector(`[data-error-for="${fieldName}"]`);
+    const inputEl = document.querySelector(`[name="${fieldName}"]`);
+
+    if (!errorEl || !inputEl) return;
+
+    errorEl.textContent = message;
+    errorEl.classList.add("visible");
+    inputEl.classList.add("error-input");
+  }
+
+  function clearErrors() {
+    document.querySelectorAll(".error").forEach((el) => {
+      el.textContent = "";
+      el.classList.remove("visible");
+    });
+
+    document.querySelectorAll(".error-input").forEach((el) => {
+      el.classList.remove("error-input");
+    });
+  }
+
+  toggleText.addEventListener("click", (e) => {
+    const toggleLink = e.target.closest("#toggle-link");
+    if (!toggleLink) return;
+    e.preventDefault();
+    const next = authBox.dataset.mode === "login" ? "register" : "login";
+    setMode(next);
+  });
+
+  guestLink.addEventListener("click", (e) => {
+    e.preventDefault();
+    window.location.href = "dashboard.html";
+  });
+
+  document.querySelectorAll(".toggle-password").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const input = btn.previousElementSibling;
+      const icon = btn.querySelector("i");
+
+      if (input.type === "password") {
+        input.type = "text";
+        icon.classList.remove("fa-eye-slash");
+        icon.classList.add("fa-eye");
+      } else {
+        input.type = "password";
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
+      }
+    });
+  });
+
+  themeToggle.addEventListener("click", () => {
+    const isLight =
+      document.documentElement.getAttribute("data-theme") === "light";
+    const nextTheme = isLight ? "dark" : "light";
+    localStorage.setItem("theme", nextTheme);
+    hasManualTheme = true;
+    applyTheme(nextTheme);
+  });
+
+  systemTheme.addEventListener("change", (event) => {
+    if (hasManualTheme) return;
+    applyTheme(event.matches ? "light" : "dark");
+  });
+
+  form.querySelectorAll("input").forEach((input) => {
+    input.addEventListener("input", () => {
+      const errorEl = document.querySelector(`[data-error-for="${input.name}"]`);
+      if (errorEl) {
+        errorEl.textContent = "";
+        errorEl.classList.remove("visible");
+        input.classList.remove("error-input");
+      }
+    });
+  });
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    clearErrors();
+
+    const mode = authBox.dataset.mode;
+    const identifier = form.querySelector('[name="identifier"]').value.trim();
+    const password = form.querySelector('[name="password"]').value.trim();
+    const username = form.querySelector('[name="username"]')?.value.trim();
+    const confirmValue = form
+      .querySelector('[name="confirmPassword"]')
+      ?.value.trim();
+
+    let hasError = false;
+
+    if (!identifier) {
+      showError("identifier", "Please enter your email or username");
+      hasError = true;
+    }
+
+    if (!password) {
+      showError("password", "Please enter your password");
+      hasError = true;
+    }
+
+    if (mode === "register") {
+      if (!username) {
+        showError("username", "Please choose a username");
+        hasError = true;
+      }
+
+      if (!confirmValue) {
+        showError("confirmPassword", "Please confirm your password");
+        hasError = true;
+      }
+
+      if (password && confirmValue && password !== confirmValue) {
+        showError("confirmPassword", "Passwords do not match");
+        hasError = true;
+      }
+    }
+
+    if (hasError) return;
+
+    window.location.href = "dashboard.html";
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest("input") && !e.target.closest(".error")) {
+      clearErrors();
+    }
+  });
+
+  initTheme();
+  setMode("login");
+});
