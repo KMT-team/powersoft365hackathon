@@ -27,6 +27,7 @@
   --button-border-hover: color-mix(in srgb, var(--accent) 45%, var(--control-border));
   --icon-border-hover: color-mix(in srgb, var(--accent) 55%, var(--control-border));
   --toggle-border-hover: color-mix(in srgb, var(--accent) 60%, var(--control-border));
+  --input-surface: rgba(255,255,255,0.02);
 
   --subtext: var(--muted);
   --danger: #EF4444;
@@ -34,10 +35,13 @@
 
 [data-theme="light"] {
   --bg: #D1D5DB;
-  --surface: #FFFFFF;
+  --surface: #F5F7FA;
+
   --text: #0F172A;
   --muted: #64748B;
-  --card-border: #E2E8F0;
+  --subtext: #475569;
+
+  --card-border: #D6DBE1;
   --control-border: #64748B;
   --divider: #000000;
 
@@ -54,13 +58,14 @@
   --button-bg: color-mix(in srgb, var(--surface) 88%, transparent);
   --icon-bg: color-mix(in srgb, var(--surface) 88%, transparent);
   --toggle-bg: color-mix(in srgb, var(--surface) 88%, transparent);
+  --input-surface: #EEF1F5;
+  --icon-bg: var(--input-surface);
+  --toggle-bg: var(--input-surface);
 
   --input-border-hover: #00b4d8;
   --button-border-hover: #00b4d8;
   --icon-border-hover: #00b4d8;
   --toggle-border-hover: #00b4d8;
-
-  --subtext: #000000;
 }
 
 /* ========== BASE ========== */
@@ -78,7 +83,8 @@ body{
   min-height: 100vh;
   display: grid;
   place-items: center;
-  padding: 28px 16px;
+  align-content: center;
+  padding: 20px 16px 78px;
   overflow-y: scroll;
 }
 
@@ -145,7 +151,7 @@ input{
   margin-top: 8px;
   border-radius: 12px;
   border: 1px solid var(--control-border);
-  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  background: var(--input-surface);
   color: var(--text);
   outline: none;
   transition: border-color 0.20s ease, box-shadow 0.20s ease;
@@ -243,7 +249,7 @@ a:hover{ text-decoration: underline; }
   padding: 11px 14px;
   border-radius: 14px;
   border: 1px solid var(--control-border);
-  background: var(--button-bg);
+  background: var(--input-surface);
   color: var(--text);
   cursor: pointer;
   font-weight: 700;
@@ -361,7 +367,7 @@ a:hover{ text-decoration: underline; }
   height: 40px;
   border-radius: 10px;
   border: 1px solid var(--control-border);
-  background: var(--toggle-bg);
+  background: var(--input-surface);
   color: var(--text);
   cursor: pointer;
   display: grid;
