@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"powersoft365hackathon/handlers"
+	handlers "powersoft365hackathon/internal/handlers"
 )
 
 func loadDotEnv(path string) error {
@@ -46,22 +46,24 @@ func main() {
 		log.Fatal("db init:", err)
 	}
 
-	// === ROUTE DEFINITIONS ===
+	// Landing page - displays simple API info message (either use this)*
+	//	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	//		w.Write([]byte("<h1>Learning Platform API</h1><p>Use /api/login to authenticate</p>"))
+	//	})
 
-	// Landing page - displays simple API info message
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("<h1>Learning Platform API</h1><p>Use /api/login to authenticate</p>"))
-	})
+	// (Katerina) ADDED: Page routes - serve HTML/CSS files to browser
+	http.HandleFunc("/", handlers.ServeLogin) // *(or this does the same)
+	http.HandleFunc("/styles.css", handlers.ServeCSS)
+	http.HandleFunc("/login.js", handlers.ServeJS)
+	http.HandleFunc("/dashboard.html", handlers.ServeDashboard)
 
-	// === API ENDPOINTS ===
-	http.HandleFunc("/api/login", handlers.HandleLogin)    // API: Login existing user or create new account
-	http.HandleFunc("/api/logout", handlers.HandleLogout)  // API: End user session and clear cookies
-	http.HandleFunc("/api/check-auth", handlers.CheckAuth) // API: Verify if user is currently authenticated
+	// (Katerina) ADDED: API routes - handle authentication logic
+	http.HandleFunc("/api/register", handlers.HandleRegister)
+	http.HandleFunc("/api/login", handlers.HandleLogin)
+	http.HandleFunc("/api/logout", handlers.HandleLogout)
+	http.HandleFunc("/api/check-auth", handlers.CheckAuth)
+	http.HandleFunc("/api/guest", handlers.HandleGuestLogin)
 
-	// === PROTECTED PAGES ===
-	http.HandleFunc("/homepage", handlers.ServeHomepage) // User dashboard (requires login)
-
-	// === START SERVER ===
 	log.Println("Server running on http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
