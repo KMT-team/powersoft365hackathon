@@ -113,10 +113,25 @@ document.addEventListener("DOMContentLoaded", () => {
     setMode(next);
   });
 
-  guestLink.addEventListener("click", (e) => {
-    e.preventDefault();
-    window.location.href = "dashboard.html";
-  });
+  // (Katerina) ADDED: Updated guest login functionality
+ guestLink.addEventListener("click", async (e) => {
+  e.preventDefault();
+
+  try {
+    const res = await fetch("/api/guest", {
+      method: "POST",
+      credentials: "include"
+    });
+
+    if (res.ok) {
+      window.location.href = "/dashboard.html";
+    } else {
+      alert("Guest login failed");
+    }
+  } catch (err) {
+    alert("Network error");
+  }
+});
 
   document.querySelectorAll(".toggle-password").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -160,7 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     clearErrors();
@@ -204,7 +219,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (hasError) return;
 
-    window.location.href = "dashboard.html";
+    // (Katerina) ADDED: Backend API integration - sends form data to server
+    // Calls /api/register or /api/login based on mode, receives session cookie on success
+    try {
+      const endpoint = mode === "register" ? "/api/register" : "/api/login";
+      const body = mode === "register"
+        ? { identifier, username, password, confirmPassword: confirmValue }
+        : { identifier, password };
+
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(body)
+      });
+
+      if (response.ok) {
+        window.location.href = "/dashboard.html";
+      } else {
+        const text = await response.text();
+        showError("password", text || "Authentication failed");
+      }
+    } catch (err) {
+      showError("password", "Network error");
+    }
   });
 
   document.addEventListener("click", (e) => {
