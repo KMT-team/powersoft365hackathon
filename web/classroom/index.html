@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MODA PRO | Classroom</title>
+
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        slate: {
+                            850: '#1e293b',
+                            900: '#0f172a',
+                        },
+                        indigo: {
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        outfit: ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Application CSS -->
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="css/classroom.css">
+    <link rel="stylesheet" href="css/simulator.css">
+    <link rel="stylesheet" href="css/tutor.css">
+</head>
+
+<body class="bg-gray-50 h-screen w-screen overflow-hidden text-gray-800">
+
+    <!-- Main Container: 2-column grid (55% / 45%) -->
+    <div id="classroom-grid" class="grid grid-cols-[55%_45%] h-full w-full transition-all duration-300 ease-in-out">
+
+        <!-- Left Pane: 2-row grid (65% / 35%) -->
+        <div class="grid grid-rows-[65%_35%] h-full border-r border-gray-200">
+            <!-- Top Row (65%) - Simulator -->
+            <div class="h-full border-2 border-gray-200 relative">
+                <!-- Simulator Content Injected Here -->
+                <div class="flex h-full overflow-hidden bg-gray-50 text-gray-800 w-full">
+
+                    <!-- Sidebar -->
+                    <aside class="w-64 bg-slate-900 text-white flex flex-col shadow-xl">
+                        <div class="p-6">
+                            <h1 class="text-2xl font-bold tracking-tight text-indigo-400">MODA PRO</h1>
+                            <p class="text-xs text-slate-400 mt-1">Admin Dashboard</p>
+                        </div>
+
+                        <nav class="flex-1 px-4 space-y-2">
+                            <a href="#" id="sim-view-dashboard"
+                                class="flex items-center gap-3 px-4 py-3 bg-indigo-600 rounded-lg text-sm font-medium transition-colors shadow-md">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z">
+                                    </path>
+                                </svg>
+                                Inventory
+                            </a>
+                            <div class="mt-8">
+                                <h3 class="px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Recent
+                                    Transactions</h3>
+                                <!-- Transaction Log Container -->
+                                <div id="sim-transaction-log"
+                                    class="mt-2 text-xs space-y-2 px-4 max-h-60 overflow-y-auto custom-scrollbar">
+                                    <p class="text-slate-600 italic">No transactions yet.</p>
+                                </div>
+                            </div>
+                        </nav>
+
+                        <div class="p-4 border-t border-slate-800">
+                            <div class="flex flex-col gap-2">
+                                <p class="text-xs text-slate-400 font-semibold uppercase">Current Role</p>
+                                <div class="flex items-center gap-2 bg-slate-800 p-1 rounded-lg">
+                                    <button
+                                        class="sim-role-btn flex-1 text-xs py-1.5 rounded-md bg-indigo-600 text-white font-medium transition-colors"
+                                        data-role="admin">Admin</button>
+                                    <button
+                                        class="sim-role-btn flex-1 text-xs py-1.5 rounded-md text-slate-400 hover:text-white font-medium transition-colors"
+                                        data-role="employee">Employee</button>
+                                </div>
+                            </div>
+                        </div>
+                    </aside>
+
+                    <!-- Main Content -->
+                    <main class="flex-1 flex flex-col relative overflow-hidden">
+                        <!-- Header -->
+                        <header
+                            class="bg-white border-b border-gray-200 px-8 py-4 flex justify-between items-center shadow-sm">
+                            <div>
+                                <h2 class="text-xl font-bold text-gray-800">Inventory Overview</h2>
+                                <p class="text-sm text-gray-500">Manage your products and updated stock.</p>
+                            </div>
+                            <button id="sim-btn-add-item"
+                                class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-all transform hover:scale-105 shadow-md flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 4v16m8-8H4"></path>
+                                </svg>
+                                Add New Product
+                            </button>
+                        </header>
+
+                        <!-- Filters -->
+                        <div class="px-8 py-4 bg-white/50 backdrop-blur-sm sticky top-0 z-10">
+                            <div class="flex gap-2">
+                                <button data-filter="all"
+                                    class="sim-filter-btn active px-4 py-1.5 rounded-full text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors">All</button>
+                                <button data-filter="Men"
+                                    class="sim-filter-btn px-4 py-1.5 rounded-full text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors">Men</button>
+                                <button data-filter="Women"
+                                    class="sim-filter-btn px-4 py-1.5 rounded-full text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors">Women</button>
+                                <button data-filter="Accessories"
+                                    class="sim-filter-btn px-4 py-1.5 rounded-full text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors">Accessories</button>
+                            </div>
+                        </div>
+
+                        <!-- Inventory Grid -->
+                        <div id="sim-inventory-grid"
+                            class="flex-1 bg-gray-50 p-8 overflow-y-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 content-start">
+                            <!-- Items will be injected here via JS -->
+                        </div>
+                    </main>
+                </div>
+
+                <!-- Modals (Placed at end of container) -->
+                <!-- Add Item Modal -->
+                <div id="sim-add-item-modal"
+                    class="absolute inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center">
+                    <div
+                        class="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden transform transition-all scale-100 mx-4">
+                        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                            <h3 class="text-lg font-bold text-gray-800">Add New Product</h3>
+                            <button id="sim-btn-close-modal" class="text-gray-400 hover:text-gray-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <form id="sim-add-product-form" class="p-6 space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
+                                <input type="text" name="name" required
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                                    placeholder="e.g. Vintage Denim Jacket">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                                    <select name="category"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                                        <option value="Men">Men</option>
+                                        <option value="Women">Women</option>
+                                        <option value="Accessories">Accessories</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Price ($)</label>
+                                    <input type="number" name="price" step="0.01" required
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                                        placeholder="0.00">
+                                </div>
+                            </div>
+
+                            <!-- Variant Section -->
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <div class="flex justify-between items-center mb-3">
+                                    <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Initial
+                                        Variants</h4>
+                                    <button type="button" id="sim-btn-add-variant-new"
+                                        class="text-xs flex items-center gap-1 text-indigo-600 hover:text-indigo-800 font-bold transition-colors">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 4v16m8-8H4"></path>
+                                        </svg>
+                                        Add Variant
+                                    </button>
+                                </div>
+                                <div id="sim-add-variants-container"
+                                    class="space-y-2 max-h-48 overflow-y-auto custom-scrollbar pr-2">
+                                </div>
+                            </div>
+
+                            <div class="pt-4 flex justify-end gap-3">
+                                <button type="button" id="sim-btn-cancel-modal"
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">Cancel</button>
+                                <button type="submit"
+                                    class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 shadow transition-colors">Save
+                                    Product</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Edit Item Modal -->
+                <div id="sim-edit-item-modal"
+                    class="absolute inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center">
+                    <div
+                        class="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden transform transition-all scale-100 mx-4">
+                        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                            <h3 class="text-lg font-bold text-gray-800">Edit Product</h3>
+                            <button id="sim-btn-close-edit-modal" class="text-gray-400 hover:text-gray-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <form id="sim-edit-product-form" class="p-6 space-y-4">
+                            <input type="hidden" name="id" id="sim-edit-product-id">
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
+                                <input type="text" name="name" id="sim-edit-name" required
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                                    <select name="category" id="sim-edit-category"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                                        <option value="Men">Men</option>
+                                        <option value="Women">Women</option>
+                                        <option value="Accessories">Accessories</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Price ($)</label>
+                                    <input type="number" name="price" id="sim-edit-price" step="0.01" required
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                                </div>
+                            </div>
+
+                            <!-- Variant Stock Management -->
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <div class="flex justify-between items-center mb-3">
+                                    <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Manage
+                                        Variants</h4>
+                                    <button type="button" id="sim-btn-add-variant"
+                                        class="text-xs flex items-center gap-1 text-indigo-600 hover:text-indigo-800 font-bold transition-colors">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 4v16m8-8H4"></path>
+                                        </svg>
+                                        Add Variant
+                                    </button>
+                                </div>
+                                <div id="sim-edit-variants-container"
+                                    class="space-y-2 max-h-48 overflow-y-auto custom-scrollbar pr-2">
+                                </div>
+                            </div>
+
+                            <!-- Deactivation Reason (Employee Only) -->
+                            <div id="sim-employee-controls" class="hidden border-t border-gray-100 pt-4 mt-4">
+                                <div id="sim-deactivation-section" class="space-y-3">
+                                    <label class="block text-sm font-medium text-gray-700">Deactivation Reason</label>
+                                    <select id="sim-deactivation-reason"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                                        <option value="">Select a reason...</option>
+                                        <option value="OUT OF STOCK">OUT OF STOCK</option>
+                                        <option value="DAMAGED CLOTHING">DAMAGED CLOTHING</option>
+                                        <option value="SEASONAL SALE END">SEASONAL SALE END</option>
+                                        <option value="INSTRUCTED FROM ADMIN">INSTRUCTED FROM ADMIN</option>
+                                    </select>
+                                    <button type="button" id="sim-btn-deactivate-product"
+                                        class="w-full px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 transition-colors">
+                                        Deactivate Item
+                                    </button>
+                                </div>
+                                <button type="button" id="sim-btn-activate-product"
+                                    class="w-full px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors hidden">
+                                    Activate Item
+                                </button>
+                            </div>
+
+                            <!-- Admin Controls -->
+                            <div id="sim-admin-controls" class="pt-4 flex justify-between items-center">
+                                <button type="button" id="sim-btn-delete-product"
+                                    class="px-4 py-2 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                        </path>
+                                    </svg>
+                                    Delete Product
+                                </button>
+                                <div class="flex gap-3">
+                                    <button type="button" id="sim-btn-cancel-edit-modal"
+                                        class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">Cancel</button>
+                                    <button type="submit"
+                                        class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 shadow transition-colors">Save
+                                        Changes</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Bottom Row (35%) -->
+            <div class="p-4 bg-gray-50 border-t border-gray-200">
+                <div class="h-full border-2 border-gray-200">
+                    <!-- Placeholder or additional content -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Pane: Occupies second column, stretches to 100% height - Tutor -->
+        <div id="tutor-pane" class="h-full bg-white border-l border-gray-200 relative">
+            <!-- Toggle Button -->
+            <button id="tutor-toggle-btn" class="absolute left-0 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 
+                       bg-white border border-gray-300 rounded-full cursor-pointer shadow-md 
+                       flex items-center justify-center h-8 w-8 hover:bg-gray-100 transition-all">
+                <svg id="tutor-toggle-icon" class="w-4 h-4 text-gray-600 font-bold" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <!-- Icon will be set via JS or default here (right/left arrow) -->
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </button>
+
+            <!-- Tutor Content -->
+            <div class="tutor-chat-container">
+                <div class="tutor-chat-header">
+                    <h1>ModaPro Tutor</h1>
+                    <p>Your AI Guide for Retail Success</p>
+                    <div class="tutor-mode-selector">
+                        <label for="tutor-instructor-mode">Instructor Mode:</label>
+                        <select id="tutor-instructor-mode">
+                            <option value="soft">Soft (Onboarding Buddy)</option>
+                            <option value="intermediate">Intermediate (Implementation Consultant)</option>
+                            <option value="realistic">Realistic (Regional Manager)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="tutor-chat-history" class="tutor-chat-history">
+                    <!-- Messages will appear here -->
+                    <div class="tutor-message tutor-system">
+                        <div class="tutor-bubble">
+                            Hello! 🌸 I'm your ModaPro Tutor. How can I help you today?
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tutor-input-area">
+                    <input type="text" id="tutor-user-input" placeholder="Type your question..." autocomplete="off">
+                    <button id="tutor-send-btn" class="tutor-send-button">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Scripts -->
+    <script type="module" src="js/simulator-main.js"></script>
+    <script src="js/tutor.js"></script>
+
+</body>
+
+</html>

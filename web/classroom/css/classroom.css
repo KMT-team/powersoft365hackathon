@@ -1,0 +1,62 @@
+/* classroom.css */
+/* Shared styles for the Moda Pro Classroom layout */
+
+/* Ensure full height for layout */
+html,
+body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    /* Prevent body scroll, handle in panes */
+}
+
+/* Custom Scrollbar - Shared across components */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    /* slate-300 */
+    border-radius: 20px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: #94a3b8;
+    /* slate-400 */
+}
+
+/* Utility for layout consistency */
+.classroom-container {
+    height: 100%;
+    width: 100%;
+    display: grid;
+}
+
+/* Collapsible Grid State */
+#classroom-grid {
+    transition: grid-template-columns 0.3s ease-in-out;
+}
+
+.classroom-collapsed {
+    grid-template-columns: 95% 5% !important;
+}
+
+/* Collapsed State: Tutor Pane Styling */
+.classroom-collapsed #tutor-pane {
+    background-color: #695ef8 !important;
+    /* User requested color */
+    border-left: none;
+}
+
+.classroom-collapsed .tutor-chat-container {
+    display: none !important;
+    /* Hide text/content */
+}

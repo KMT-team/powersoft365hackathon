@@ -6,7 +6,9 @@ import (
 	"os"
 	"strings"
 
-	handlers "powersoft365hackathon/internal/handlers"
+	handlers "modapro-tutor/internal/handlers"
+
+	"google.golang.org/adk/session"
 )
 
 func loadDotEnv(path string) error {
@@ -36,6 +38,10 @@ func main() {
 	// load .env if present (ignore error if not)
 	_ = loadDotEnv(".env")
 
+	if os.Getenv("GOOGLE_API_KEY") == "" {
+		log.Println("Warning: GOOGLE_API_KEY not found in environment. AI features will fail if requested.")
+	}
+
 	// apply migrations (development)
 	if err := handlers.ApplyMigrations(os.Getenv("DATABASE_URL"), "migrations/001_create_tables.sql"); err != nil {
 		log.Println("migrations:", err)
@@ -51,11 +57,16 @@ func main() {
 	//		w.Write([]byte("<h1>Learning Platform API</h1><p>Use /api/login to authenticate</p>"))
 	//	})
 
+	// session service (in-memory)
+	sessionService := session.InMemoryService()
+	chatHandler := handlers.NewChatHandler(sessionService)
+
 	// (Katerina) ADDED: Page routes - serve HTML/CSS files to browser
 	http.HandleFunc("/", handlers.ServeLogin) // *(or this does the same)
 	http.HandleFunc("/styles.css", handlers.ServeCSS)
 	http.HandleFunc("/login.js", handlers.ServeJS)
 	http.HandleFunc("/dashboard.html", handlers.ServeDashboard)
+	http.HandleFunc("/classroom/", handlers.ServeClassroom)
 
 	// (Katerina) ADDED: API routes - handle authentication logic
 	http.HandleFunc("/api/register", handlers.HandleRegister)
@@ -63,6 +74,9 @@ func main() {
 	http.HandleFunc("/api/logout", handlers.HandleLogout)
 	http.HandleFunc("/api/check-auth", handlers.CheckAuth)
 	http.HandleFunc("/api/guest", handlers.HandleGuestLogin)
+
+	// (Unified) AI Chat Endpoint
+	http.Handle("/api/chat", chatHandler)
 
 	log.Println("Server running on http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
