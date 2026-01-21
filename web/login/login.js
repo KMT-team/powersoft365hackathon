@@ -113,25 +113,29 @@ document.addEventListener("DOMContentLoaded", () => {
     setMode(next);
   });
 
-  // (Katerina) ADDED: Updated guest login functionality
- guestLink.addEventListener("click", async (e) => {
-  e.preventDefault();
+  // Guest login - clear localStorage before redirecting
+  guestLink.addEventListener("click", async (e) => {
+    e.preventDefault();
 
-  try {
-    const res = await fetch("/api/guest", {
-      method: "POST",
-      credentials: "include"
-    });
+    // Clear all classroom data for guest users
+    localStorage.removeItem('sim_inventory_v1');
+    localStorage.removeItem('sim_inventory_logs_v1');
 
-    if (res.ok) {
-      window.location.href = "/dashboard.html";
-    } else {
-      alert("Guest login failed");
+    try {
+      const res = await fetch("/api/guest", {
+        method: "POST",
+        credentials: "include"
+      });
+
+      if (res.ok) {
+        window.location.href = "/dashboard.html";
+      } else {
+        alert("Guest login failed");
+      }
+    } catch (err) {
+      alert("Network error");
     }
-  } catch (err) {
-    alert("Network error");
-  }
-});
+  });
 
   document.querySelectorAll(".toggle-password").forEach((btn) => {
     btn.addEventListener("click", () => {

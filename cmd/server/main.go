@@ -56,11 +56,18 @@ func main() {
 	sessionService := session.InMemoryService()
 	chatHandler := handlers.NewChatHandler(sessionService)
 
-	// (Katerina) ADDED: Page routes - serve HTML/CSS files to browser
-	http.HandleFunc("/", handlers.ServeLogin) // *(or this does the same)
+	// Page routes - serve HTML/CSS files to browser
+	// Root landing page (index.html at repo root)
+	http.HandleFunc("/", handlers.ServeRoot)
+	// Login page
+	http.HandleFunc("/login", handlers.ServeLogin)
+	http.HandleFunc("/login.html", handlers.ServeLogin)
 	http.HandleFunc("/styles.css", handlers.ServeCSS)
 	http.HandleFunc("/login.js", handlers.ServeJS)
 	http.HandleFunc("/dashboard.html", handlers.ServeDashboard)
+
+	// Serve files under /web/ directly from the repo's web/ folder
+	http.Handle("/web/", http.StripPrefix("/web/", http.FileServer(http.Dir("web/"))))
 	http.HandleFunc("/classroom/", handlers.ServeClassroom)
 
 	// (Katerina) ADDED: API routes - handle authentication logic

@@ -1,202 +1,243 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MODA PRO | Classroom</title>
-
-    <!-- Google Fonts - Manrope (matching login) -->
+    <title>ModaPro Classroom</title>
+    
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
-
-    <!-- Consolidated CSS -->
-    <link rel="stylesheet" href="css/simulation.css">
-    <link rel="stylesheet" href="css/tutor.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="../styles.css">
 </head>
-
-<body class="classroom-page h-screen w-screen overflow-hidden">
-
-    <!-- Main Classroom Grid: Simulator (left) + Tutor (right) -->
+<body class="classroom">
+    <!-- Main Container: 70% left (simulator) + 30% right (tutor) -->
     <div id="classroom-grid">
         
-        <!-- LEFT PANE: Simulator Interface -->
-        <div id="simulator-pane" class="classroom-pane">
+        <!-- LEFT SIDE: Inventory Simulation (70%) -->
+        <div id="simulator-pane">
             
-            <!-- Header -->
-            <div class="pane-header">
-                <div>
+            <!-- Top Section: Inventory Panel -->
+            <div class="inventory-section">
+                <div class="section-header">
                     <h2>Inventory Simulator</h2>
-                    <p>Practice managing product inventory</p>
-                </div>
-                <button id="tutor-toggle-btn" class="btn btn-sm" aria-label="Toggle tutor pane">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
-
-            <!-- Role Selector -->
-            <div style="padding: 12px 16px; border-bottom: 1px solid var(--divider); display: flex; gap: 12px;">
-                <span style="font-size: 12px; font-weight: 700; color: var(--muted);">Role:</span>
-                <button class="sim-role-btn btn btn-sm" data-role="admin">Admin</button>
-                <button class="sim-role-btn btn btn-sm" data-role="employee">Employee</button>
-            </div>
-
-            <!-- Simulator Content -->
-            <div id="simulator-content" style="flex: 1; overflow-y: auto; padding: 16px;">
-                
-                <!-- Toolbar -->
-                <div class="button-group" style="margin-bottom: 16px;">
                     <button id="sim-btn-add-item" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Add Product
-                    </button>
-                    <button id="sim-btn-refresh" class="btn btn-secondary">
-                        <i class="fas fa-sync"></i> Refresh
+                        <i class="fas fa-plus"></i> Add New Product
                     </button>
                 </div>
-
+                
                 <!-- Inventory Grid -->
                 <div id="sim-inventory-grid" class="inventory-grid">
-                    <p class="text-muted">Loading inventory...</p>
+                    <!-- Products will be rendered here by simulation.js -->
                 </div>
-
             </div>
-
-            <!-- Recent Transactions Log -->
-            <div style="padding: 12px 16px; border-top: 1px solid var(--divider); max-height: 150px; overflow-y: auto; background: color-mix(in srgb, var(--surface) 50%, transparent);">
-                <p style="margin: 0 0 8px 0; font-size: 12px; font-weight: 700; color: var(--muted);">Recent Transactions</p>
-                <div id="sim-transaction-log" style="font-size: 11px; color: var(--muted);">
-                    <p style="margin: 0;">No transactions yet.</p>
+            
+            <!-- Bottom Section: Exercise & Instructions -->
+            <div class="exercise-section">
+                <div class="exercise-header">
+                    <h3>Exercise & Instructions</h3>
+                </div>
+                <div class="exercise-content">
+                    <div class="exercise-item">
+                        <h4>Current Exercise</h4>
+                        <p>Practice adding and managing products in the inventory system. Start by reviewing the default "Oxford Shirt" item, then try adding your own products.</p>
+                    </div>
+                    <div class="exercise-item">
+                        <h4>Instructions</h4>
+                        <ul>
+                            <li>Click "Add New Product" to create a new inventory item</li>
+                            <li>Fill in product details: name, category, price, and quantity</li>
+                            <li>Click "Sell" to reduce stock by 1 unit</li>
+                            <li>Click "Edit" to modify product details</li>
+                            <li>Click "Delete" to remove a product from inventory</li>
+                        </ul>
+                    </div>
+                    <div class="exercise-item">
+                        <h4>Recent Transactions</h4>
+                        <div id="sim-transaction-log" class="transaction-log">
+                            <p class="muted">No transactions yet.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <!-- RIGHT PANE: AI Tutor Chat -->
-        <div id="tutor-pane" class="classroom-pane">
-            
-            <!-- Header -->
-            <div class="pane-header">
-                <div>
-                    <h2>ModaPro Tutor</h2>
-                    <p>AI-powered guidance</p>
-                </div>
+        
+        <!-- VERTICAL DIVIDER -->
+        <div id="classroom-divider"></div>
+        
+        <!-- RIGHT SIDE: Tutor Chat (30%) -->
+        <div id="tutor-pane">
+            <div class="tutor-header">
+                <h2>ModaPro Tutor</h2>
+                <p>AI-powered guidance</p>
             </div>
-
+            
             <!-- Mode Selector -->
-            <div style="padding: 12px 16px; border-bottom: 1px solid var(--divider);">
-                <label style="font-size: 12px; font-weight: 700; color: var(--muted); display: block; margin-bottom: 8px;">Learning Mode:</label>
-                <select id="tutor-mode-selector" class="btn" style="width: 100%; padding: 10px;">
+            <div class="tutor-mode">
+                <label>Learning Mode:</label>
+                <select id="tutor-instructor-mode">
                     <option value="soft">Soft (Onboarding Buddy)</option>
-                    <option value="intermediate">Intermediate (Implementation Consultant)</option>
-                    <option value="realistic">Realistic (Regional Manager)</option>
+                    <option value="intermediate">Intermediate (Consultant)</option>
+                    <option value="realistic">Realistic (Manager)</option>
                 </select>
             </div>
-
-            <!-- Chat History -->
-            <div id="tutor-chat-history" style="flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px;">
-                <div style="background: color-mix(in srgb, var(--accent) 10%, transparent); border-radius: 12px; padding: 12px; border-left: 3px solid var(--accent);">
-                    <p style="margin: 0; font-size: 14px; color: var(--text);">Hello! 👋 I'm your ModaPro Tutor. How can I help you today?</p>
+            
+            <!-- Chat History (Scrollable) -->
+            <div id="tutor-chat-history" class="tutor-chat-history">
+                <div class="tutor-message tutor-system">
+                    <div class="tutor-bubble">
+                        Hello! I'm your ModaPro Tutor. How can I help you today?
+                    </div>
                 </div>
             </div>
-
+            
             <!-- Chat Input -->
-            <div style="padding: 12px 16px; border-top: 1px solid var(--divider); display: flex; gap: 8px;">
+            <div class="tutor-input">
                 <input 
                     type="text" 
                     id="tutor-user-input" 
                     placeholder="Ask me anything..."
-                    style="flex: 1; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--control-border); background: color-mix(in srgb, var(--surface) 88%, transparent); color: var(--text); outline: none;"
+                    autocomplete="off"
                 />
-                <button id="tutor-send-btn" class="btn btn-primary" style="padding: 10px 16px;">
+                <button id="tutor-send-btn" class="btn-send">
                     <i class="fas fa-paper-plane"></i>
                 </button>
             </div>
         </div>
     </div>
-
+    
     <!-- MODAL: Add Product -->
     <div id="sim-add-item-modal" class="modal hidden">
-        <form id="sim-add-product-form">
-            <h3>Add a New Product</h3>
-            <label for="product-name">Product Name</label>
-            <input type="text" id="product-name" name="name" required>
-
-            <label for="product-category">Category</label>
-            <select id="product-category" name="category" required>
-                <option value="Men">Men</option>
-                <option value="Women">Women</option>
-                <option value="Accessories">Accessories</option>
-                <option value="Shoes">Shoes</option>
-            </select>
-
-            <label for="product-price">Price (€)</label>
-            <input type="number" id="product-price" name="price" step="0.01" required>
-
-            <label for="product-quantity">Quantity</label>
-            <input type="number" id="product-quantity" name="quantity" min="0" value="0" required>
-
-            <button type="submit">Add Product</button>
-            <button type="button" id="sim-btn-close-modal">Cancel</button>
-        </form>
-    </div>
-
-    <!-- Default Product Display -->
-    <div id="simulator-content">
-        <!-- Default product will be rendered here -->
-    </div>
-
-    <!-- MODAL: Edit Product -->
-    <div id="sim-edit-item-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Edit Product</h3>
-                <button id="sim-btn-close-edit-modal" class="modal-close" aria-label="Close modal">&times;</button>
+                <h3>Add New Product</h3>
+                <button id="sim-btn-close-modal" class="modal-close">&times;</button>
             </div>
-
-            <form id="sim-edit-product-form" class="form-group">
-                <input type="hidden" id="sim-edit-product-id" name="id">
-
+            <form id="sim-add-product-form">
                 <label>Product Name *</label>
-                <input type="text" name="name" required>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Category *</label>
-                        <select name="category" required>
-                            <option value="Men">Men</option>
-                            <option value="Women">Women</option>
-                            <option value="Accessories">Accessories</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Price ($) *</label>
-                        <input type="number" name="price" step="0.01" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Quantity</label>
-                        <input type="number" name="quantity" min="0" value="0">
-                    </div>
-                </div>
-
-                <label>Variants</label>
-                <div id="sim-edit-variants-container" style="border: 1px solid var(--card-border); border-radius: 12px; padding: 12px; max-height: 200px; overflow-y: auto; margin-bottom: 12px;"></div>
-                <button type="button" id="sim-btn-add-variant" class="btn btn-secondary btn-sm">
-                    <i class="fas fa-plus"></i> Add Variant
-                </button>
-
-                <div class="button-group" style="margin-top: 20px; gap: 8px;">
-                    <button type="button" id="sim-btn-delete-product" class="btn btn-danger">Delete</button>
-                    <div style="flex: 1;"></div>
-                    <button type="button" id="sim-btn-cancel-edit-modal" class="btn btn-secondary">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Update Product</button>
+                <input type="text" name="name" required placeholder="e.g. Vintage Denim Jacket">
+                
+                <label>Category *</label>
+                <select name="category" required>
+                    <option value="Men">Men</option>
+                    <option value="Women">Women</option>
+                    <option value="Accessories">Accessories</option>
+                </select>
+                
+                <label>Price (€) *</label>
+                <input type="number" name="price" step="0.01" required placeholder="0.00">
+                
+                <div class="button-group">
+                    <button type="button" id="sim-btn-cancel-modal" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Product</button>
                 </div>
             </form>
         </div>
     </div>
-
-    <!-- Simulation JS -->
-    <script src="js/simulation.js" type="module"></script>
-    <script src="js/tutor.js" defer></script>
+    
+    <!-- MODAL: Edit Product -->
+    <div id="sim-edit-item-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Product</h3>
+                <button id="sim-btn-close-edit-modal" class="modal-close">&times;</button>
+            </div>
+            <form id="sim-edit-product-form">
+                <input type="hidden" name="id">
+                
+                <label>Product Name *</label>
+                <input type="text" name="name" required>
+                
+                <label>Category *</label>
+                <select name="category" required>
+                    <option value="Men">Men</option>
+                    <option value="Women">Women</option>
+                    <option value="Accessories">Accessories</option>
+                </select>
+                
+                <label>Price (€) *</label>
+                <input type="number" name="price" step="0.01" required>
+                
+                <div class="button-group">
+                    <button type="button" id="sim-btn-delete-product" class="btn btn-danger">Delete</button>
+                    <button type="button" id="sim-btn-cancel-edit-modal" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- MODAL: Add Variant -->
+    <div id="sim-variant-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Variant</h3>
+                <button id="sim-btn-close-variant-modal" class="modal-close">&times;</button>
+            </div>
+            <form id="sim-variant-form">
+                <label>Color *</label>
+                <input type="text" name="color" required placeholder="e.g. Red">
+                
+                <label>Size *</label>
+                <select name="size" required>
+                    <option value="XS">XS</option>
+                    <option value="S">S</option>
+                    <option value="M">M</option>
+                    <option value="L">L</option>
+                    <option value="XL">XL</option>
+                    <option value="XXL">XXL</option>
+                    <option value="OneSize">One Size</option>
+                </select>
+                
+                <label>Stock *</label>
+                <input type="number" name="stock" min="0" value="0" required>
+                
+                <div class="button-group">
+                    <button type="button" id="sim-btn-cancel-variant-modal" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Variant</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- MODAL: Edit Variant -->
+    <div id="sim-edit-variant-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Variant</h3>
+                <button id="sim-btn-close-edit-variant-modal" class="modal-close">&times;</button>
+            </div>
+            <form id="sim-edit-variant-form">
+                <label>Color *</label>
+                <input type="text" name="color" required>
+                
+                <label>Size *</label>
+                <select name="size" required>
+                    <option value="XS">XS</option>
+                    <option value="S">S</option>
+                    <option value="M">M</option>
+                    <option value="L">L</option>
+                    <option value="XL">XL</option>
+                    <option value="XXL">XXL</option>
+                    <option value="OneSize">One Size</option>
+                </select>
+                
+                <label>Stock *</label>
+                <input type="number" name="stock" min="0" required>
+                
+                <div class="button-group">
+                    <button type="button" id="sim-btn-cancel-edit-variant-modal" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Variant</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="js/classroom.js"></script>
 </body>
-
 </html>

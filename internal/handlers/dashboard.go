@@ -5,10 +5,20 @@ import (
 	"net/http"
 )
 
+// ServeRoot serves the project's root index.html (landing page)
+func ServeRoot(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/" {
+		http.NotFound(w, r)
+		return
+	}
+	http.ServeFile(w, r, "index.html")
+}
+
 // (Katerina) ADDED: Serves login.html at root URL
 // Frontend needs this to display the login page when user visits /
 func ServeLogin(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
+	// Serve login page at /login or /login.html
+	if r.URL.Path != "/login" && r.URL.Path != "/login.html" {
 		http.NotFound(w, r)
 		return
 	}
@@ -57,14 +67,14 @@ func ServeDashboard(w http.ResponseWriter, r *http.Request) {
         <h1>Welcome to Your Dashboard</h1>
         <p class="email">Logged in as: <strong>` + email + `</strong></p>
         <div class="button-group">
-            <a href="/classroom/index.html" class="btn btn-moda">Moda Pro</a>
+			<a href="/web/classroom/index.html" class="btn btn-moda">Moda Pro</a>
             <button type="button" class="btn btn-logout" onclick="logout()">Logout</button>
         </div>
     </div>
     <script>
         function logout() {
             fetch('/api/logout', { method: 'POST', credentials: 'include' })
-                .then(() => { window.location.href = '/'; })
+                .then(() => { window.location.href = '/web/login/login.html'; })
                 .catch(err => { console.error('Logout error:', err); alert('Logout failed'); });
         }
     </script>
