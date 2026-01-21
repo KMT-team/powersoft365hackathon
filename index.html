@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Learnflowy</title>
+  <script>
+    (function () {
+      const stored = localStorage.getItem("theme");
+      const systemLight = window.matchMedia("(prefers-color-scheme: light)").matches;
+      const theme = stored ?? (systemLight ? "light" : "dark");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="landing">
+
+  <!-- NAV -->
+  <header class="nav">
+    <div class="brand">
+      <img class="brand-mark" src="assets/learnflowy-logo.svg" alt="Learnflowy logo">
+      <div class="logo-text">Learnflowy</div>
+    </div>
+    <button id="theme-toggle" aria-label="Toggle theme">
+      <i class="fa-solid fa-sun"></i>
+    </button>
+  </header>
+
+  <!-- HERO -->
+  <main>
+    <section class="hero">
+      <div class="hero-text">
+        <h1>Simple. Powerful. Effective.</h1>
+        <p class="hero-lead">"Interactive simulations that help you understand how software really works."</p>
+        <a class="primary-btn" href="login.html">Start learning</a>
+      </div>
+      <div class="hero-flow"></div>
+    </section>
+
+    <section class="flow-section reveal-section">
+      <h2>How it works</h2>
+      <div class="flow-step">
+        <h3>Step 1 — Choose a software or system you want to explore.</h3>
+        <p>From a variaty of tools, start with what you’re curious about.</p>
+      </div>
+      <div class="flow-step">
+        <h3>Step 2 — Select what you want to learn</h3>
+        <p>Concepts, logic, workflows, or internal behavior — you decide the learning goal.</p>
+      </div>
+      <div class="flow-step">
+        <h3>Step 3 — Step inside an interactive simulation.</h3>
+        <p>No theory walls. No passive watching. You interact directly with how things work.</p>
+      </div>
+      <div class="flow-step">
+        <h3>Step 4 — Explore different flows and paths.</h3>
+        <p>See how inputs, decisions, and processes affect the system in real time.</p>
+      </div>
+      <div class="flow-step">
+        <h3>Step 5 — Build real understanding</h3>
+        <p>Connect action with outcome.</p>
+      </div>
+      <div class="flow-step">
+        <h3>Step 6 — Practice in a safe, controlled environment.</h3>
+        <p>Make mistakes, experiment freely, and learn without pressure.</p>
+      </div>
+    </section>
+
+    <section class="section simulation-preview reveal-section">
+      <div class="section-header">
+        <h2>Sample simulation preview</h2>
+        <p>A static glimpse of the guided workspace and checkpoints.</p>
+      </div>
+      <div class="preview-grid">
+        <div class="preview-card">
+          <div class="preview-top">
+            <span class="pill">Simulation</span>
+            <span class="pill pill--accent">Step 2 of 6</span>
+          </div>
+          <div class="preview-body">
+            <div class="preview-line preview-line--short"></div>
+            <div class="preview-line"></div>
+            <div class="preview-line"></div>
+            <div class="preview-line preview-line--wide"></div>
+          </div>
+          <div class="preview-footer">
+            <div class="preview-button"></div>
+            <div class="preview-button preview-button--ghost"></div>
+          </div>
+        </div>
+        <div class="preview-side">
+          <div class="preview-step">
+            <h4>Checkpoint</h4>
+            <p>Complete the action in the interface to unlock the next cue.</p>
+          </div>
+          <div class="preview-step">
+            <h4>Tip</h4>
+            <p>Hints stay subtle so the learner remains in control.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section who-its-for reveal-section">
+      <div class="section-header">
+        <h2>Who it’s for</h2>
+        <p>Built for learners who prefer doing over watching.</p>
+      </div>
+      <div class="cards">
+        <div class="card">
+          <h3>Career switchers</h3>
+          <p>Get hands-on clarity before committing to a new role.</p>
+        </div>
+        <div class="card">
+          <h3>Busy professionals</h3>
+          <p>Practice skills quickly without long-form courses.</p>
+        </div>
+        <div class="card">
+          <h3>Teams</h3>
+          <p>Standardize onboarding with guided simulations.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section final-cta reveal-section">
+      <div class="cta-card">
+        <div class="cta-text">
+          <h2>Start learning with calm focus</h2>
+          <p>Build skill through practice-first simulations designed for momentum.</p>
+        </div>
+        <a class="primary-btn" href="login.html">Start learning</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="flow.js"></script>
+</body>
+</html>
