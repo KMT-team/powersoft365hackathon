@@ -870,6 +870,12 @@ body.landing #theme-toggle{
   margin-right: -110px;
 }
 
+body.classroom #theme-toggle {
+  position: static;
+  width: 40px;
+  height: 40px;
+}
+
 #theme-toggle:hover {
   background: color-mix(in srgb, var(--accent) 12%, transparent);
   border-color: var(--toggle-border-hover);
@@ -903,6 +909,35 @@ input.error-input {
   border-color: var(--danger);
 }
 
+/* ========== RESIZABLE DIVIDERS ========== */
+.resizable-divider {
+  background: var(--card-border);
+  position: relative;
+  z-index: 10;
+}
+
+.resizable-divider.vertical {
+  width: 4px;
+  cursor: ew-resize;
+  flex-shrink: 0;
+  transition: background 0.2s ease;
+}
+
+.resizable-divider.vertical:hover {
+  background: var(--accent);
+}
+
+.resizable-divider.horizontal {
+  height: 4px;
+  cursor: ns-resize;
+  flex-shrink: 0;
+  transition: background 0.2s ease;
+}
+
+.resizable-divider.horizontal:hover {
+  background: var(--accent);
+}
+
 /* ========== CLASSROOM LAYOUT ========== */
 body.classroom {
   display: block;
@@ -926,9 +961,15 @@ body.classroom {
 }
 
 #classroom-divider {
-  width: 1px;
+  width: 4px;
   background: var(--card-border);
   flex-shrink: 0;
+  cursor: ew-resize;
+  transition: background 0.2s ease;
+}
+
+#classroom-divider:hover {
+  background: var(--accent);
 }
 
 #tutor-pane {
@@ -957,11 +998,19 @@ body.classroom {
 }
 
 .section-header h2 {
-  margin: 0;
+  margin: 0 0 4px 0;
   font-size: 28px;
   font-weight: 800;
   color: var(--text);
   letter-spacing: -0.4px;
+}
+
+.section-subtitle {
+  margin: 0;
+  font-size: 13px;
+  color: var(--accent);
+  font-weight: 600;
+  font-style: italic;
 }
 
 .inventory-grid {
@@ -1083,12 +1132,12 @@ body.classroom {
 
 /* ========== EXERCISE SECTION ========== */
 .exercise-section {
-  flex: 0 0 auto;
-  max-height: 35%;
+  flex: 1 1 25%;
   display: flex;
   flex-direction: column;
   background: var(--surface);
   border-top: 1px solid var(--card-border);
+  min-height: 0;
 }
 
 .exercise-header {
@@ -1169,8 +1218,8 @@ body.classroom {
 /* ========== TUTOR PANE ========== */
 .tutor-header {
   padding: 24px;
-  background: linear-gradient(135deg, var(--accent) 0%, #6366f1 100%);
-  color: white;
+  background: var(--surface);
+  border-bottom: 1px solid var(--card-border);
   text-align: center;
   flex-shrink: 0;
 }
@@ -1180,13 +1229,14 @@ body.classroom {
   font-size: 22px;
   font-weight: 800;
   letter-spacing: -0.2px;
+  color: var(--text);
 }
 
 .tutor-header p {
   margin: 0;
   font-size: 14px;
-  opacity: 0.95;
   font-weight: 600;
+  color: var(--accent);
 }
 
 .tutor-mode {
@@ -1505,7 +1555,11 @@ body.classroom {
 .modal-content select:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 1px var(--ring);
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+.modal-content input:required:invalid {
+  border-color: var(--accent);
 }
 
 .button-group {
@@ -1573,14 +1627,17 @@ body.classroom {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  padding: 12px 20px;
+  padding: 14px 22px;
   border-radius: 12px;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
   opacity: 0;
   transition: opacity 0.3s ease;
   z-index: 2000;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border: 2px solid var(--accent);
+  background: var(--surface);
+  color: var(--accent);
 }
 
 .toast.visible {
@@ -1588,13 +1645,15 @@ body.classroom {
 }
 
 .toast-success {
-  background: #10b981;
-  color: white;
+  border-color: var(--accent);
+  background: var(--surface);
+  color: var(--accent);
 }
 
 .toast-error {
-  background: var(--danger);
-  color: white;
+  border-color: var(--accent);
+  background: var(--surface);
+  color: var(--accent);
 }
 
 /* Scrollbar Styling */

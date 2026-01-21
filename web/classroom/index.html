@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ModaPro Classroom</title>
     
+    <!-- Theme Init -->
+    <script>
+    (function () {
+        const stored = localStorage.getItem("theme");
+        const systemLight = window.matchMedia("(prefers-color-scheme: light)").matches;
+        const theme = stored ?? (systemLight ? "light" : "dark");
+        if (theme === "light") document.documentElement.setAttribute("data-theme", "light");
+    })();
+    </script>
+    
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,10 +34,18 @@
             <!-- Top Section: Inventory Panel -->
             <div class="inventory-section">
                 <div class="section-header">
-                    <h2>Inventory Simulator</h2>
-                    <button id="sim-btn-add-item" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Add New Product
-                    </button>
+                    <div>
+                        <h2>ModaPro Simulation</h2>
+                        <p class="section-subtitle">Yes, here you can mess up!</p>
+                    </div>
+                    <div style="display: flex; gap: 12px; align-items: center;">
+                        <button id="theme-toggle" aria-label="Toggle theme">
+                            <i class="fa-solid fa-moon"></i>
+                        </button>
+                        <button id="sim-btn-add-item" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Add New Product
+                        </button>
+                    </div>
                 </div>
                 
                 <!-- Inventory Grid -->
@@ -35,6 +53,9 @@
                     <!-- Products will be rendered here by simulation.js -->
                 </div>
             </div>
+            
+            <!-- HORIZONTAL DIVIDER -->
+            <div class="resizable-divider horizontal"></div>
             
             <!-- Bottom Section: Exercise & Instructions -->
             <div class="exercise-section">
@@ -67,7 +88,7 @@
         </div>
         
         <!-- VERTICAL DIVIDER -->
-        <div id="classroom-divider"></div>
+        <div id="classroom-divider" class="resizable-divider vertical"></div>
         
         <!-- RIGHT SIDE: Tutor Chat (30%) -->
         <div id="tutor-pane">
@@ -125,6 +146,7 @@
                 <select name="category" required>
                     <option value="Men">Men</option>
                     <option value="Women">Women</option>
+                    <option value="Kids">Kids</option>
                     <option value="Accessories">Accessories</option>
                 </select>
                 
@@ -156,6 +178,7 @@
                 <select name="category" required>
                     <option value="Men">Men</option>
                     <option value="Women">Women</option>
+                    <option value="Kids">Kids</option>
                     <option value="Accessories">Accessories</option>
                 </select>
                 
@@ -238,6 +261,6 @@
     </div>
     
     <!-- Scripts -->
-    <script src="js/classroom.js"></script>
+    <script src="classroom.js"></script>
 </body>
 </html>

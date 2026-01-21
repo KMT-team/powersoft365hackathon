@@ -454,3 +454,101 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+// ==================== RESIZABLE DIVIDERS ====================
+function initResizableDividers() {
+    const verticalDivider = document.getElementById('classroom-divider');
+    const horizontalDivider = document.querySelector('.resizable-divider.horizontal');
+    const simulatorPane = document.getElementById('simulator-pane');
+    const tutorPane = document.getElementById('tutor-pane');
+    const inventorySection = document.querySelector('.inventory-section');
+    const exerciseSection = document.querySelector('.exercise-section');
+
+    if (verticalDivider && simulatorPane && tutorPane) {
+        let isResizing = false;
+        verticalDivider.addEventListener('mousedown', () => { isResizing = true; });
+        document.addEventListener('mouseup', () => { isResizing = false; });
+        document.addEventListener('mousemove', (e) => {
+            if (!isResizing) return;
+            const containerWidth = window.innerWidth;
+            const newSimWidth = (e.clientX / containerWidth) * 100;
+            if (newSimWidth > 5 && newSimWidth < 95) {
+                simulatorPane.style.width = newSimWidth + '%';
+                tutorPane.style.width = (100 - newSimWidth) + '%';
+            }
+        });
+    }
+
+    if (horizontalDivider && inventorySection && exerciseSection && simulatorPane) {
+        let isResizing = false;
+        horizontalDivider.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            isResizing = true;
+        });
+        document.addEventListener('mouseup', () => { isResizing = false; });
+        document.addEventListener('mousemove', (e) => {
+            if (!isResizing) return;
+            e.preventDefault();
+            const rect = simulatorPane.getBoundingClientRect();
+            const newInvHeight = e.clientY - rect.top;
+            const totalHeight = rect.height;
+            const percentage = (newInvHeight / totalHeight) * 100;
+            if (percentage > 5 && percentage < 95) {
+                inventorySection.style.flex = `1 1 ${percentage}%`;
+                exerciseSection.style.flex = `1 1 ${100 - percentage}%`;
+                exerciseSection.style.maxHeight = 'none';
+            }
+        });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', initResizableDividers);
+
+// ==================== THEME TOGGLE ====================
+function initThemeToggle() {
+    const themeToggle = document.getElementById('theme-toggle');
+    if (!themeToggle) return;
+
+    const themeIcon = themeToggle.querySelector('i');
+    const systemTheme = window.matchMedia('(prefers-color-scheme: light)');
+
+    function updateThemeIcon() {
+        const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+        if (isLight) {
+            themeIcon.classList.remove('fa-moon');
+            themeIcon.classList.add('fa-sun');
+        } else {
+            themeIcon.classList.remove('fa-sun');
+            themeIcon.classList.add('fa-moon');
+        }
+    }
+
+    function applyTheme(theme) {
+        if (theme === 'light') {
+            document.documentElement.setAttribute('data-theme', 'light');
+        } else {
+            document.documentElement.removeAttribute('data-theme');
+        }
+        updateThemeIcon();
+    }
+
+    function initTheme() {
+        const storedTheme = localStorage.getItem('theme');
+        if (storedTheme === 'light' || storedTheme === 'dark') {
+            applyTheme(storedTheme);
+            return;
+        }
+        applyTheme(systemTheme.matches ? 'light' : 'dark');
+    }
+
+    themeToggle.addEventListener('click', () => {
+        const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+        const nextTheme = isLight ? 'dark' : 'light';
+        localStorage.setItem('theme', nextTheme);
+        applyTheme(nextTheme);
+    });
+
+    initTheme();
+}
+
+document.addEventListener('DOMContentLoaded', initThemeToggle);
