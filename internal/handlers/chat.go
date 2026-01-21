@@ -167,6 +167,34 @@ func (h *ChatHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(w).Encode(resp)
 }
 
-// Helper for fmt usage since I used it inside the function but didn't import it in the initial list if I copied poorly.
-// Wait, I missed "fmt" in imports. I should check before writing.
-// I will rewrite the content to include fmt properly.
+// Enhance AI coach for dynamic scenarios and feedback
+func (h *ChatHandler) GenerateScenario(userID string, level int) (Scenario, error) {
+	// Placeholder logic for dynamic scenario generation
+	return Scenario{
+		ID:    level,
+		Title: fmt.Sprintf("Level %d - Dynamic Task", level),
+		Steps: []string{"Step 1", "Step 2", "Step 3"},
+		Hints: []string{"Hint 1", "Hint 2", "Hint 3"},
+	}, nil
+}
+
+func (h *ChatHandler) ProvideFeedback(userID string, performance map[string]interface{}) string {
+	// Placeholder logic for feedback generation
+	mistakes := performance["mistakes"].(int)
+	timeTaken := performance["timeTaken"].(int)
+
+	if mistakes == 0 {
+		return fmt.Sprintf("Great job! You completed the task in %d seconds with no mistakes.", timeTaken)
+	}
+	return fmt.Sprintf("You completed the task in %d seconds with %d mistakes. Review the steps carefully.", timeTaken, mistakes)
+}
+
+func (h *ChatHandler) AdaptToPerformance(userID string, performance map[string]interface{}) string {
+	// Placeholder logic for adapting to user performance
+	mistakes := performance["mistakes"].(int)
+
+	if mistakes > 3 {
+		return "It seems you're struggling. Would you like a hint or a walkthrough?"
+	}
+	return "You're doing well! Let's move to the next challenge."
+}

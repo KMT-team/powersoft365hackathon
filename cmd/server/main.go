@@ -52,11 +52,6 @@ func main() {
 		log.Fatal("db init:", err)
 	}
 
-	// Landing page - displays simple API info message (either use this)*
-	//	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-	//		w.Write([]byte("<h1>Learning Platform API</h1><p>Use /api/login to authenticate</p>"))
-	//	})
-
 	// session service (in-memory)
 	sessionService := session.InMemoryService()
 	chatHandler := handlers.NewChatHandler(sessionService)
@@ -77,6 +72,19 @@ func main() {
 
 	// (Unified) AI Chat Endpoint
 	http.Handle("/api/chat", chatHandler)
+
+	// Scenario and Progress API routes
+	http.HandleFunc("/api/scenario/next", handlers.GetNextScenario)
+	http.HandleFunc("/api/scenario/", func(w http.ResponseWriter, r *http.Request) {
+		if strings.HasSuffix(r.URL.Path, "/action") {
+			handlers.PostScenarioAction(w, r)
+		} else if strings.HasSuffix(r.URL.Path, "/finish") {
+			handlers.PostScenarioFinish(w, r)
+		} else {
+			http.NotFound(w, r)
+		}
+	})
+	http.HandleFunc("/api/progress", handlers.GetUserProgress)
 
 	log.Println("Server running on http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
