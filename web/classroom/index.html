@@ -64,27 +64,7 @@
                 <div class="exercise-header">
                 </div>
                 <div class="exercise-content">
-                    <div class="exercise-item">
-                        <h4>Current Exercise</h4>
-                        <p>Practice adding and managing products in the inventory system. Start by reviewing the default
-                            "Oxford Shirt" item, then try adding your own products.</p>
-                    </div>
-                    <div class="exercise-item">
-                        <h4>Instructions</h4>
-                        <ul>
-                            <li>Click "Add New Product" to create a new inventory item</li>
-                            <li>Fill in product details: name, category, price, and quantity</li>
-                            <li>Click "Sell" to reduce stock by 1 unit</li>
-                            <li>Click "Edit" to modify product details</li>
-                            <li>Click "Delete" to remove a product from inventory</li>
-                        </ul>
-                    </div>
-                    <div class="exercise-item">
-                        <h4>Recent Transactions</h4>
-                        <div id="sim-transaction-log" class="transaction-log">
-                            <p class="muted">No transactions yet.</p>
-                        </div>
-                    </div>
+                    <!-- Dynamic content will be loaded here -->
                 </div>
             </div>
         </div>
@@ -254,6 +234,18 @@
                     <button type="submit" class="btn btn-primary">Update Variant</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Exercise Selection -->
+    <div id="sim-exercise-selection-modal" class="modal hidden">
+        <div class="modal-content large-modal">
+            <div class="modal-header">
+                <h3>Select an Exercise</h3>
+            </div>
+            <div id="exercise-selection-list" class="exercise-selection-grid">
+                <!-- Exercises will be rendered here -->
+            </div>
         </div>
     </div>
 

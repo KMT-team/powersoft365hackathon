@@ -1999,4 +1999,41 @@ body.classroom {
   border-bottom: 1px solid inherit;
   border-top: none;
   border-left: none;
+}.sim-deactivated { opacity: 0.5; pointer-events: none; filter: grayscale(100%); transition: all 0.3s ease; }
+
+/* ========== EXERCISE SELECTION MODAL ========== */
+.modal-content.large-modal {
+    width: 80%;
+    height: 80%;
+    max-width: 1100px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.exercise-selection-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 24px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.exercise-selection-grid .exercise-list-item {
+    padding: 24px;
+    border: 1px solid var(--card-border);
+    background: var(--input-surface);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.2s ease;
+    margin: 0;
+}
+
+.exercise-selection-grid .exercise-list-item:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+    box-shadow: 0 8px 24px rgba(0, 180, 216, 0.1);
 }

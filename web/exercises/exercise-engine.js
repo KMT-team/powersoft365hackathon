@@ -222,9 +222,8 @@ function getCurrentExercise() {
 function updateExerciseUI() {
     if (!exerciseContent) return;
 
-    if (currentExercise === 0 || allCompleted) {
-        renderExerciseList();
-    } else {
+    // Exercise Content: If active, show details. If inactive, show "Select Exercise" prompt in sidebar.
+    if (currentExercise > 0 && !allCompleted) {
         const exercise = getCurrentExercise();
         if (exercise) {
             exerciseContent.innerHTML = `
@@ -246,6 +245,19 @@ function updateExerciseUI() {
                 </div>
             `;
         }
+    } else {
+        // Sidebar empty state - clear any previous content or buttons
+        // User requested to keep selection ONLY in the popup
+        exerciseContent.innerHTML = '';
+    }
+
+    const invSection = document.querySelector('.inventory-section');
+    if (invSection) {
+        if (currentExercise === 0 || allCompleted) {
+            invSection.classList.add('sim-deactivated');
+        } else {
+            invSection.classList.remove('sim-deactivated');
+        }
     }
 
     const hintsToggle = document.getElementById('hints-toggle');
@@ -259,13 +271,14 @@ function updateExerciseUI() {
     updateSimulationsButton();
 }
 
-function renderExerciseList() {
-    if (!exerciseContent) return;
 
-    const listHTML = exercises.map(ex => {
+function renderExerciseList() {
+    const listContainer = document.getElementById('exercise-selection-list');
+    if (!listContainer) return;
+
+    listContainer.innerHTML = exercises.map(ex => {
         const isCompleted = completions[ex.id] && completions[ex.id] > 0;
 
-        // Check if exercise is locked
         let isLocked = false;
         if (ex.id > 1) {
             for (let i = 1; i < ex.id; i++) {
@@ -277,35 +290,32 @@ function renderExerciseList() {
         }
 
         const buttonHTML = isLocked
-            ? `<button class="btn btn-sm btn-secondary" style="opacity: 0.5;" disabled title="Complete Exercise ${ex.id - 1} first">
+            ? `<button class="btn btn-secondary" style="opacity: 0.5;" disabled title="Complete prior exercises first">
                 <i class="fas fa-lock"></i> Locked
               </button>`
             : isCompleted
-                ? `<button class="btn btn-sm btn-success" style="cursor: default;" disabled>
-                <i class="fas fa-check"></i> Completed!
+                ? `<button class="btn btn-success" style="cursor: default;" disabled>
+                <i class="fas fa-check"></i> Completed
               </button>`
-                : `<button class="btn btn-sm btn-primary start-exercise-btn" data-exercise="${ex.id}">
-                Start
+                : `<button class="btn btn-primary start-exercise-btn" data-exercise="${ex.id}">
+                Start Exercise
               </button>`;
 
         return `
-            <div class="exercise-list-item" data-exercise="${ex.id}">
-                <h4>${ex.title}</h4>
-                <p>${ex.description}</p>
-                ${buttonHTML}
+            <div class="exercise-list-item">
+                <div>
+                    <h4>${ex.title}</h4>
+                    <p>${ex.description}</p>
+                </div>
+                <div style="margin-top: 16px;">
+                    ${buttonHTML}
+                </div>
             </div>
         `;
     }).join('');
 
-    exerciseContent.innerHTML = `
-        <div class="exercise-item">
-            <h4>Available Exercises</h4>
-            <p>Complete exercises in order to unlock the next ones:</p>
-        </div>
-        ${listHTML}
-    `;
-
-    document.querySelectorAll('.start-exercise-btn').forEach(btn => {
+    // Bind click events
+    listContainer.querySelectorAll('.start-exercise-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const exId = parseInt(e.target.closest('button').dataset.exercise);
             startExercise(exId);
@@ -348,7 +358,15 @@ function startExercise(exId) {
         exercise.currentStep = exercise.hints[0].step;
     }
 
+    // CLOSE MODAL
+    const modal = document.getElementById('sim-exercise-selection-modal');
+    if (modal) modal.classList.add('hidden');
+
     updateExerciseUI();
+
+    // Activate Simulator (remove deactivated class)
+    const invSection = document.querySelector('.inventory-section');
+    if (invSection) invSection.classList.remove('sim-deactivated');
 
     if (window.clearHints) window.clearHints();
     if (hintsEnabled && window.renderHints && exercise) {
@@ -428,6 +446,15 @@ function completeExercise() {
     if (window.clearHints) window.clearHints();
 
     updateExerciseUI();
+
+    // Auto-open modal for next exercise selection with 2s delay
+    setTimeout(() => {
+        const modal = document.getElementById('sim-exercise-selection-modal');
+        if (modal) {
+            renderExerciseList();
+            modal.classList.remove('hidden');
+        }
+    }, 2000);
 }
 
 function restartExercise() {
@@ -673,12 +700,11 @@ function initExerciseEngine() {
     const exerciseHeader = document.querySelector('.exercise-header');
     if (exerciseHeader) {
         const controlsDiv = document.createElement('div');
-        controlsDiv.style.cssText = 'display: flex; gap: 12px; align-items: center; margin-top: 12px;';
+        controlsDiv.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-top: 12px; flex-wrap: wrap;';
 
         const hintsToggle = document.createElement('button');
         hintsToggle.id = 'hints-toggle';
         hintsToggle.className = 'btn btn-sm btn-secondary';
-        hintsToggle.style.cssText = 'flex: 1;';
         hintsToggle.innerHTML = hintsEnabled
             ? '<i class="fas fa-lightbulb"></i> Hints ON'
             : '<i class="far fa-lightbulb"></i> Hints OFF';
@@ -687,41 +713,55 @@ function initExerciseEngine() {
         const restartBtn = document.createElement('button');
         restartBtn.id = 'restart-exercises';
         restartBtn.className = 'btn btn-sm btn-secondary';
-        restartBtn.style.cssText = 'flex: 1;';
         restartBtn.innerHTML = '<i class="fas fa-redo"></i> Restart';
         restartBtn.addEventListener('click', () => {
             if (currentExercise > 0) {
-                restartExercise();  // Restart current exercise
+                restartExercise();
             } else {
-                restartAll();       // Restart all exercises (if on overview screen)
+                restartAll();
             }
         });
 
-
-        const simulationsBtn = document.createElement('button');
-        simulationsBtn.id = 'simulations-btn';
-        simulationsBtn.className = 'btn btn-sm btn-primary';
-        simulationsBtn.style.cssText = 'flex: 1;';
-        simulationsBtn.innerHTML = '<i class="fas fa-robot"></i> Simulations';
-        simulationsBtn.addEventListener('click', () => {
-            if (window.showToast) {
-                window.showToast('AI Simulations coming soon!');
+        const switchBtn = document.createElement('button');
+        switchBtn.className = 'btn btn-sm btn-primary';
+        switchBtn.innerHTML = '<i class="fas fa-list"></i> Exercises';
+        switchBtn.addEventListener('click', () => {
+            const modal = document.getElementById('sim-exercise-selection-modal');
+            if (modal) {
+                renderExerciseList();
+                modal.classList.remove('hidden');
             }
         });
 
         controlsDiv.appendChild(hintsToggle);
         controlsDiv.appendChild(restartBtn);
-        controlsDiv.appendChild(simulationsBtn);
+        controlsDiv.appendChild(switchBtn);
         exerciseHeader.appendChild(controlsDiv);
     }
 
-    if (hintsEnabled && window.renderHints) {
-        const exercise = getCurrentExercise();
-        if (exercise) {
-            setTimeout(() => {
-                const firstHints = exercise.hints.filter(h => h.step === exercise.currentStep);
-                window.renderHints(firstHints);
-            }, 500);
+    // Initial State Check
+    if (currentExercise === 0 || allCompleted) {
+        const modal = document.getElementById('sim-exercise-selection-modal');
+        if (modal) {
+            renderExerciseList();
+            modal.classList.remove('hidden');
+        }
+        // Ensure deactivated
+        const invSection = document.querySelector('.inventory-section');
+        if (invSection) invSection.classList.add('sim-deactivated');
+    } else {
+        // Exercise is active, ensure activated
+        const invSection = document.querySelector('.inventory-section');
+        if (invSection) invSection.classList.remove('sim-deactivated');
+
+        if (hintsEnabled && window.renderHints) {
+            const exercise = getCurrentExercise();
+            if (exercise) {
+                setTimeout(() => {
+                    const firstHints = exercise.hints.filter(h => h.step === exercise.currentStep);
+                    window.renderHints(firstHints);
+                }, 500);
+            }
         }
     }
 
