@@ -5,19 +5,17 @@ import (
 	"net/http"
 )
 
-// ServeRoot serves the project's root index.html (landing page)
+// ServeRoot serves landing page
 func ServeRoot(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		http.NotFound(w, r)
 		return
 	}
-	http.ServeFile(w, r, "index.html")
+	http.ServeFile(w, r, "web/pre-login/index.html")
 }
 
-// (Katerina) ADDED: Serves login.html at root URL
-// Frontend needs this to display the login page when user visits /
+// ServeLogin serves login page
 func ServeLogin(w http.ResponseWriter, r *http.Request) {
-	// Serve login page at /login or /login.html
 	if r.URL.Path != "/login" && r.URL.Path != "/login.html" {
 		http.NotFound(w, r)
 		return
@@ -25,8 +23,7 @@ func ServeLogin(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "web/login/login.html")
 }
 
-// (Katerina) ADDED: Serves dashboard page after successful login
-// Checks session cookie, shows user email if valid, redirects to login if not
+// ServeDashboard serves user dashboard (requires auth)
 func ServeDashboard(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("session")
 	if err != nil {
@@ -82,13 +79,11 @@ func ServeDashboard(w http.ResponseWriter, r *http.Request) {
 </html>`))
 }
 
-// ServeHomepage displays user dashboard (protected route)
-// Only accessible to authenticated users with valid session
+// ServeHomepage returns user data as JSON (requires auth)
 func ServeHomepage(w http.ResponseWriter, r *http.Request) {
-	// Try to get session cookie from request
 	cookie, err := r.Cookie("session")
-	if err != nil { // Cookie not found - user not logged in
-		http.Error(w, "Not authenticated", http.StatusUnauthorized) // Return 401 error
+	if err != nil {
+		http.Error(w, "Not authenticated", http.StatusUnauthorized)
 		return
 	}
 
@@ -98,9 +93,8 @@ func ServeHomepage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// User is authenticated - return homepage data as JSON
 	json.NewEncoder(w).Encode(map[string]string{
-		"message": "Welcome to Learning Platform", // Welcome message
-		"email":   email,                          // User's email address
+		"message": "Welcome to Learning Platform",
+		"email":   email,
 	})
 }

@@ -57,8 +57,10 @@ func main() {
 	chatHandler := handlers.NewChatHandler(sessionService)
 
 	// Page routes - serve HTML/CSS files to browser
-	// Root landing page (index.html at repo root)
-	http.HandleFunc("/", handlers.ServeRoot)
+	// Root landing page
+	http.HandleFunc("/", handlers.ServePreLogin)
+	http.HandleFunc("/flow.js", handlers.ServePreLogin)
+	http.HandleFunc("/assets/", handlers.ServePreLogin)
 	// Login page
 	http.HandleFunc("/login", handlers.ServeLogin)
 	http.HandleFunc("/login.html", handlers.ServeLogin)

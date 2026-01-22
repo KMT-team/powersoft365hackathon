@@ -1,103 +1,98 @@
-# ModaPro Tutor - Learning Platform
+# Learnflowy - Interactive Learning Platform
 
-AI-powered inventory management learning platform with interactive scenarios.
+Learnflowy is an AI-powered learning platform with interactive simulations for software tools. Built for the Powersoft 365 x Zone01 Athens Hackathon.
 
 ## Quick Start
 
 ```bash
-# Setup
-export DATABASE_URL=postgresql://user:pass@localhost:5432/powersoft365
-export GOOGLE_API_KEY=your-api-key
+# 1. Setup environment
+cp .env.example .env
+# Edit .env with your credentials
 
-# Run migrations
-psql -d powersoft365 -f migrations/001_create_tables.sql
+# 2. Start PostgreSQL and create database
+psql -U postgres -c "CREATE DATABASE flowy;"
 
-# Start server
+# 3. Run server (auto-applies migrations)
 go run cmd/server/main.go
 
-# Open http://localhost:8080
+# 4. Open http://localhost:8080
 ```
 
 ## Features
 
-- **Classroom**: 2-pane interactive interface (Simulator + AI Coach)
-- **Inventory Sim**: Product management with role-based scenarios
-- **AI Coaching**: Google Gemini integration with adaptive feedback
-- **Progress**: Badge tracking and user progress
-- **Responsive**: Mobile/tablet/desktop support
-- **Accessible**: WCAG AA compliant
+- **Landing Page**: Smooth scrolling, theme toggle, responsive design
+- **Authentication**: Register/login with bcrypt, guest mode, session management
+- **Classroom**: Split-pane interface with inventory simulator and AI tutor
+- **Exercises**: 5 progressive exercises with hints, validation, and completion tracking
+- **AI Tutor**: Google Gemini integration with adaptive coaching modes
+- **Inventory Sim**: Product/variant management with sell/damage actions
 
-## API
+## Tech Stack
 
-```
-POST   /api/login              # User login
-GET    /api/dashboard          # Dashboard
-GET    /api/scenario/next      # Get scenario
-POST   /api/scenario/:id/action # Submit action
-POST   /api/scenario/:id/finish # Complete scenario
-GET    /api/progress           # Get progress
-POST   /api/chat               # Chat with AI
-```
+- **Backend**: Go 1.21+
+- **Database**: PostgreSQL with UUID extension / Docker
+- **AI**: Google Gemini API
+- **Frontend**: JavaScript, CSS variables, HTML
+- **Auth**: bcrypt password hashing, HTTP-only session cookies
 
-## Structure
+## Project Structure
 
 ```
-cmd/server/main.go                # Server entry
-internal/handlers/                # API handlers
+cmd/server/main.go           # Server entry point
+internal/
+  ├── handlers/              # HTTP handlers (auth, classroom, chat)
+  └── ai/                    # AI prompt engineering
 web/
-  ├── styles.css                 # Global theme
-  ├── login/                      # Login page
-  └── classroom/                  # Classroom UI
-      ├── index.html             # Main interface
-      ├── css/classroom-theme.css # Styles
-      └── js/                     # Event handlers
-migrations/                       # Database schema
-docs/                            # Documentation
+  ├── pre-login/             # Landing page
+  ├── login/                 # Authentication UI
+  ├── classroom/             # Simulator interface
+  ├── exercises/             # Exercise engine + hints
+  └── styles.css             # Global theme (dark/light)
+migrations/                  # Database schema
+assets/                      # Images and logos
+```
+
+## API Endpoints
+
+```
+GET    /                     # Landing page
+GET    /login                # Login page
+GET    /dashboard.html       # User dashboard
+GET    /classroom/           # Classroom interface
+
+POST   /api/register         # Create account
+POST   /api/login            # Authenticate user
+POST   /api/logout           # End session
+POST   /api/guest            # Guest login
+GET    /api/check-auth       # Verify session
+POST   /api/chat             # AI tutor chat
+```
+
+## Environment Variables Example
+
+```bash
+DATABASE_URL="postgresql://user:pass@localhost:5432/flowy"
+GOOGLE_API_KEY="your-gemini-api-key"
 ```
 
 ## Documentation
 
-- [Architecture](docs/architecture.md)
-- [API Usage](docs/api_usage.md)
-- [Database](docs/database_schema.md)
-- [Setup Guide](docs/how_to_run.md)
-- [Authentication](docs/authentication-system.md)
-
-## Testing
-
-```bash
-# Manual: Go to http://localhost:8080, register, click "Moda Pro"
-
-# API:
-curl http://localhost:8080/api/scenario/next
-curl -X POST http://localhost:8080/api/scenario/1/action \
-  -H "Content-Type: application/json" \
-  -d '{"action":"test"}'
-```
+- [Architecture](docs/architecture.md) - System design and components
+- [Database Schema](docs/database_schema.md) - Tables and relationships
+- [Setup Guide](docs/how_to_run.md) - Detailed installation steps
 
 ## Security
 
-- Passwords: bcrypt hashing
-- Sessions: HTTP-only cookies
+- Passwords hashed with bcrypt (cost 10)
+- Sessions stored in PostgreSQL with expiry
+- HTTP-only cookies prevent XSS
 - Input validation on all endpoints
-- CORS configured
-
-## Build & Deploy
-
-```bash
-# Build
-go build -o powersoft365 cmd/server/main.go
-
-# Deploy
-export DATABASE_URL=<db-url>
-export GOOGLE_API_KEY=<api-key>
-./powersoft365
-```
+- Guest users isolated with system email
 
 ## License
 
 MIT - See [LICENSE](legal/LICENSE)
 
-## Contributing
+## Team
 
-See [CONTRIBUTING.md](legal/CONTRIBUTING.md)
+Built by Marios, Thodoris, and Katerina for Powersoft 365 Hackathon 2025-2026!

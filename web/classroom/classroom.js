@@ -393,16 +393,48 @@ function addMessage(text, sender) {
     elements.chatHistory.scrollTop = elements.chatHistory.scrollHeight;
 }
 
-function sendMessage() {
-    if (!elements.userInput) return;
+let isWaitingForResponse = false;
+
+async function sendMessage() {
+    if (!elements.userInput || isWaitingForResponse) return;
     const text = elements.userInput.value.trim();
     if (!text) return;
+    
     addMessage(text, 'user');
     elements.userInput.value = '';
-    elements.userInput.focus();
-    setTimeout(() => {
-        addMessage('AI features are currently disabled. This is a placeholder interface.', 'bot');
-    }, 500);
+    elements.userInput.disabled = true;
+    elements.sendBtn.disabled = true;
+    isWaitingForResponse = true;
+    
+    const mode = elements.modeSelector ? elements.modeSelector.value : 'soft';
+    
+    try {
+        const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                message: text,
+                mode: mode,
+                user_id: 'guest',
+                session_id: 'classroom-session'
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error('Chat service unavailable');
+        }
+        
+        const data = await response.json();
+        addMessage(data.response || 'No response', 'bot');
+    } catch (err) {
+        addMessage('AI tutor is currently unavailable. Please check your API key.', 'bot');
+        console.error('Chat error:', err);
+    } finally {
+        elements.userInput.disabled = false;
+        elements.sendBtn.disabled = false;
+        isWaitingForResponse = false;
+        elements.userInput.focus();
+    }
 }
 
 // ==================== EVENT LISTENERS ====================

@@ -19,7 +19,7 @@ import (
 	"google.golang.org/genai"
 )
 
-// ChatHandler manages the AI chat interaction.
+// ChatHandler manages AI chat
 type ChatHandler struct {
 	sessionService session.Service
 	model          model.LLM
@@ -27,20 +27,19 @@ type ChatHandler struct {
 	modelInitErr   error
 }
 
-// NewChatHandler creates a new ChatHandler.
-// Note: The model is not initialized here; it is lazy-loaded on the first request.
+// NewChatHandler creates chat handler
 func NewChatHandler(sessionService session.Service) *ChatHandler {
 	return &ChatHandler{
 		sessionService: sessionService,
 	}
 }
 
-// getOrInitModel safely initializes the AI model if it hasn't been already.
+// getOrInitModel lazy-loads AI model
 func (h *ChatHandler) getOrInitModel(ctx context.Context) (model.LLM, error) {
 	h.modelInitOnce.Do(func() {
 		apiKey := os.Getenv("GOOGLE_API_KEY")
 		if apiKey == "" {
-			h.modelInitErr = fmt.Errorf("GOOGLE_API_KEY environment variable not set")
+			h.modelInitErr = fmt.Errorf("GOOGLE_API_KEY not set")
 			log.Println("Error: GOOGLE_API_KEY not set")
 			return
 		}
@@ -49,7 +48,7 @@ func (h *ChatHandler) getOrInitModel(ctx context.Context) (model.LLM, error) {
 			APIKey: apiKey,
 		}
 
-		// Initialize the Gemini model (gemini-3-flash-preview).
+		// Init Gemini model
 		var err error
 		h.model, err = gemini.NewModel(ctx, "gemini-3-flash-preview", clientConfig)
 		if err != nil {
@@ -62,7 +61,7 @@ func (h *ChatHandler) getOrInitModel(ctx context.Context) (model.LLM, error) {
 	return h.model, h.modelInitErr
 }
 
-// HandleChat processes POST requests to /api/chat.
+// ServeHTTP handles POST /api/chat
 func (h *ChatHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	if req.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -88,7 +87,7 @@ func (h *ChatHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	// Set default values if fields are missing.
+	// Set defaults
 	if input.UserID == "" {
 		input.UserID = "default-user"
 	}
@@ -101,10 +100,9 @@ func (h *ChatHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 	ctx := req.Context()
 
-	// Retrieve system instructions based on the selected mode.
 	systemInstruction := ai.GetSystemPrompt(input.Mode)
 
-	// Configure a new LLM agent with the specified model and instructions.
+	// Create LLM agent
 	ag, err := llmagent.New(llmagent.Config{
 		Name:        "ModaProTutor",
 		Description: "Expert tutor for ModaPro ecosystem",
@@ -117,7 +115,7 @@ func (h *ChatHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	// Create a runner to execute the agent within a session context.
+	// Create runner
 	currentRunner, err := runner.New(runner.Config{
 		AppName:        "modapro-tutor",
 		Agent:          ag,
@@ -129,20 +127,20 @@ func (h *ChatHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	// Ensure the session exists in the session service.
+	// Ensure session exists
 	_, _ = h.sessionService.Create(ctx, &session.CreateRequest{
 		AppName:   "modapro-tutor",
 		UserID:    input.UserID,
 		SessionID: input.SessionID,
 	})
 
-	// Construct the content message from the user's input.
+	// Build user message
 	msg := &genai.Content{
 		Parts: []*genai.Part{{Text: input.Message}},
 		Role:  "user",
 	}
 
-	// Run the agent loop to process the message and stream/collect the response.
+	// Run agent and collect response
 	var fullResponse string
 	for event, err := range currentRunner.Run(ctx, input.UserID, input.SessionID, msg, agent.RunConfig{}) {
 		if err != nil {
@@ -157,7 +155,7 @@ func (h *ChatHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 			}
 		}
 	}
-	// Prepare and send the JSON response.
+	// Send JSON response
 	resp := struct {
 		Response string `json:"response"`
 	}{Response: fullResponse}
@@ -166,11 +164,9 @@ func (h *ChatHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(w).Encode(resp)
 }
 
-// ================== UNUSED FUNCTIONS (MVP v1) ==================
-// These functions are not used in the current MVP and are kept for future enhancements
+// ========== FUTURE FEATURES ==========
 
-// GenerateScenario generates dynamic scenarios - placeholder for future AI adaptation
-// TODO: Implement when dynamic scenario generation is added
+// GenerateScenario - TODO: dynamic scenario generation
 func (h *ChatHandler) GenerateScenario(userID string, level int) map[string]interface{} {
 	return map[string]interface{}{
 		"id":    level,
@@ -180,8 +176,7 @@ func (h *ChatHandler) GenerateScenario(userID string, level int) map[string]inte
 	}
 }
 
-// ProvideFeedback generates feedback based on user performance - placeholder for future
-// TODO: Implement when AI-powered feedback is needed
+// ProvideFeedback - TODO: AI-powered feedback
 func (h *ChatHandler) ProvideFeedback(userID string, performance map[string]interface{}) string {
 	mistakes := performance["mistakes"].(int)
 	timeTaken := performance["timeTaken"].(int)
@@ -192,8 +187,7 @@ func (h *ChatHandler) ProvideFeedback(userID string, performance map[string]inte
 	return fmt.Sprintf("You completed the task in %d seconds with %d mistakes. Review the steps carefully.", timeTaken, mistakes)
 }
 
-// AdaptToPerformance adapts hints based on user mistakes - placeholder for future
-// TODO: Implement when adaptive tutoring is needed
+// AdaptToPerformance - TODO: adaptive tutoring
 func (h *ChatHandler) AdaptToPerformance(userID string, performance map[string]interface{}) string {
 	mistakes := performance["mistakes"].(int)
 

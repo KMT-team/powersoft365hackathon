@@ -123,8 +123,8 @@ const exercises = [
         hints: [
             { target: '.edit-variant-btn', text: 'Click Edit on your variant', step: 'edit' },
             { target: '#sim-edit-variant-modal input[name="stock"]', text: 'Change stock to exactly 20', step: 'fill' },
-            { target: '.sell-btn', text: 'Click Sell again', step: 'sell2' },
-            { target: '.damage-btn', text: 'Click Damage again', step: 'damage2' }
+            { target: '.sell-btn', text: 'Click Sell to reduce stock by 1', step: 'sell2' },
+            { target: '.damage-btn', text: 'Click Damage to mark 1 unit as damaged', step: 'damage2' }
         ],
         currentStep: 'edit',
         validate: () => {
@@ -142,13 +142,15 @@ const exercises = [
             const ex = exercises[4];
             
             // Progress through steps
-            if (hasStock20 && sellCount === 0 && ex.currentStep === 'edit') {
+            if (hasStock20 && ex.currentStep === 'edit') {
+                ex.currentStep = 'fill';
+            } else if (hasStock20 && ex.currentStep === 'fill') {
                 ex.currentStep = 'sell2';
                 if (window.clearHints) window.clearHints();
                 if (hintsEnabled && window.renderHints) {
                     window.renderHints(ex.hints.filter(h => h.step === 'sell2'));
                 }
-            } else if (sellCount >= 1 && damageCount === 0 && ex.currentStep === 'sell2') {
+            } else if (sellCount >= 1 && ex.currentStep === 'sell2') {
                 ex.currentStep = 'damage2';
                 if (window.clearHints) window.clearHints();
                 if (hintsEnabled && window.renderHints) {
@@ -263,8 +265,7 @@ function renderExerciseList() {
     if (!exerciseContent) return;
     
     const listHTML = exercises.map(ex => {
-        const count = completions[ex.id] || 0;
-        const countText = count > 0 ? ` <span style="color: var(--accent-text);">(✓ ${count}x)</span>` : '';
+        const isCompleted = completions[ex.id] && completions[ex.id] > 0;
         
         // Check if exercise is locked
         let isLocked = false;
@@ -281,13 +282,17 @@ function renderExerciseList() {
             ? `<button class="btn btn-sm btn-secondary" style="opacity: 0.5;" disabled title="Complete Exercise ${ex.id - 1} first">
                 <i class="fas fa-lock"></i> Locked
               </button>`
+            : isCompleted
+            ? `<button class="btn btn-sm btn-success" style="cursor: default;" disabled>
+                <i class="fas fa-check"></i> Completed!
+              </button>`
             : `<button class="btn btn-sm btn-primary start-exercise-btn" data-exercise="${ex.id}">
-                ${count > 0 ? 'Redo' : 'Start'}
+                Start
               </button>`;
         
         return `
             <div class="exercise-list-item" data-exercise="${ex.id}">
-                <h4>${ex.title}${countText}</h4>
+                <h4>${ex.title}</h4>
                 <p>${ex.description}</p>
                 ${buttonHTML}
             </div>

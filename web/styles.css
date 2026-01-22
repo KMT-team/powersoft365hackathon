@@ -71,6 +71,10 @@
 /* ========== BASE ========== */
 *{ box-sizing: border-box; }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body{
   margin: 0;
   font-family: "Manrope", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
@@ -101,6 +105,7 @@ body.landing main{
   flex-direction: column;
   align-items: stretch;
   gap: 64px;
+  padding: 28px 0 64px;
 }
 
 /* ========== LANDING ========== */
@@ -111,13 +116,14 @@ body.landing main{
   max-width: 1100px;
   margin: 0 auto 46px;
   width: 100%;
+  gap: 48px;
 }
 
 .brand{
   display: flex;
   align-items: center;
   gap: 2px;
-  margin-left: -150px;
+  margin-left: 0;
 }
 
 .brand-mark{
@@ -134,6 +140,33 @@ body.landing main{
   font-size: 22px;
 }
 
+.nav-links{
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  margin: 0 auto;
+}
+
+.nav-links a{
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 15px;
+  opacity: 0.85;
+  transition: opacity 0.2s ease;
+}
+
+.nav-links a:hover{
+  opacity: 1;
+  text-decoration: none;
+}
+
+.nav-right{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 body.landing .logo-text,
 body.landing .hero-text h1{
   font-family: "Quicksand", "Manrope", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
@@ -142,18 +175,35 @@ body.landing .hero-text h1{
 .hero{
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 52px;
+  gap: 80px;
   align-items: center;
   max-width: 1100px;
   margin: 0 auto;
   width: 100%;
-  min-height: calc(100vh - 140px);
+  min-height: calc(100vh - 260px);
 }
 
 .hero-text{
-  display: grid;
-  gap: 16px;
-  align-items: start;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  align-items: center;
+  max-width: 560px;
+  margin-top: 0;
+  margin-left: -20px;
+  min-height: auto;
+  animation: heroTextEnter 0.8s ease-out forwards;
+}
+
+@keyframes heroTextEnter {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .hero-brand{
@@ -164,18 +214,36 @@ body.landing .hero-text h1{
 
 .hero-text h1{
   margin: 0;
-  font-size: clamp(36px, 5vw, 54px);
-  font-weight: 600;
-  letter-spacing: -0.6px;
+  font-size: clamp(42px, 5vw, 56px);
+  font-weight: 700;
+  letter-spacing: -1px;
   white-space: nowrap;
+  text-shadow: 0 0 40px rgba(0, 180, 216, 0.15);
+  animation: fadeInUp 0.6s ease-out 0.2s backwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .hero-lead{
   margin: 0;
-  font-size: 18px;
+  font-size: 22px;
   color: var(--text);
-  opacity: 0.92;
-  max-width: 480px;
+  opacity: 0.95;
+  max-width: 520px;
+  margin-top: 0;
+  line-height: 1.5;
+  font-weight: 500;
+  text-align: center;
+  animation: fadeInUp 0.6s ease-out 0.4s backwards;
 }
 
 .hero-sub{
@@ -187,18 +255,29 @@ body.landing .hero-text h1{
 
 .primary-btn{
   width: fit-content;
-  padding: 12px 20px;
+  padding: 16px 32px;
   border-radius: 14px;
   border: 1px solid color-mix(in srgb, var(--accent) 60%, transparent);
   background: var(--accent);
   color: var(--accent-contrast);
   font-weight: 800;
-  font-size: 16px;
+  font-size: 18px;
   cursor: pointer;
+  margin-top: 0;
+  text-decoration: none;
+  align-self: center;
+  margin-left: 0;
+  transition: all 0.2s ease;
+}
+
+.hero .primary-btn{
+  animation: fadeInUp 0.6s ease-out 0.6s backwards;
 }
 
 .primary-btn:hover{
   background: var(--accent-hover);
+  text-decoration: none;
+  transform: translateY(-2px);
 }
 
 .primary-btn:active{
@@ -207,24 +286,38 @@ body.landing .hero-text h1{
 
 .hero-flow{
   position: relative;
-  min-height: 360px;
+  min-height: 440px;
+  margin-top: 0;
+  margin-left: 0;
+  margin-right: -150px;
   border-radius: 28px;
-  background:
-    radial-gradient(140px 140px at 30% 30%, color-mix(in srgb, var(--accent) 45%, transparent), transparent 70%),
-    radial-gradient(200px 200px at 70% 70%, color-mix(in srgb, var(--accent-text) 35%, transparent), transparent 70%),
-    linear-gradient(135deg, color-mix(in srgb, var(--surface) 75%, transparent), color-mix(in srgb, var(--surface) 92%, transparent));
-  border: 1px solid var(--card-border);
+  background: color-mix(in srgb, var(--surface) 40%, transparent);
+  border: 1px solid color-mix(in srgb, var(--card-border) 50%, transparent);
   overflow: hidden;
+  transform: scale(0.85);
+  animation: heroBoxEnter 0.8s ease-out 0.3s backwards;
 }
 
-.hero-flow::before{
-  content: "";
+@keyframes heroBoxEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.85) translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(0.85) translateX(0);
+  }
+}
+
+.hero-ui{
   position: absolute;
-  inset: 14% 12% 18% 16%;
-  border-radius: 46% 54% 62% 38% / 46% 38% 62% 54%;
-  background: linear-gradient(135deg, rgba(0,180,216,0.38), rgba(163,230,53,0.32));
-  filter: blur(6px);
-  opacity: 0.7;
+  inset: 3% 3%;
+  width: 94%;
+  height: 94%;
+  border-radius: 22px;
+  object-fit: contain;
+  object-position: center;
+  transform: translate(30px, 30px);
 }
 
 .flow-section{
@@ -269,6 +362,10 @@ body.landing .hero-text h1{
 .flow-step p{
   margin: 0 0 6px 0;
   color: var(--subtext);
+}
+
+.flow-step p:last-child{
+  margin-bottom: 0;
 }
 
 @media (max-width: 900px){
@@ -866,8 +963,14 @@ a:hover{ text-decoration: underline; }
 
 body.landing #theme-toggle{
   position: static;
-  margin-left: auto;
-  margin-right: -110px;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+@media (max-width: 900px){
+  body.landing #theme-toggle{
+    margin-right: 0;
+  }
 }
 
 body.classroom #theme-toggle {
