@@ -1,36 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ModaPro Classroom</title>
-    
+
     <!-- Theme Init -->
     <script>
-    (function () {
-        const stored = localStorage.getItem("theme");
-        const systemLight = window.matchMedia("(prefers-color-scheme: light)").matches;
-        const theme = stored ?? (systemLight ? "light" : "dark");
-        if (theme === "light") document.documentElement.setAttribute("data-theme", "light");
-    })();
+        (function () {
+            const stored = localStorage.getItem("theme");
+            const systemLight = window.matchMedia("(prefers-color-scheme: light)").matches;
+            const theme = stored ?? (systemLight ? "light" : "dark");
+            if (theme === "light") document.documentElement.setAttribute("data-theme", "light");
+        })();
     </script>
-    
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    
+
     <!-- Styles -->
     <link rel="stylesheet" href="../styles.css">
 </head>
+
 <body class="classroom">
     <!-- Main Container: 70% left (simulator) + 30% right (tutor) -->
     <div id="classroom-grid">
-        
+
         <!-- LEFT SIDE: Inventory Simulation (70%) -->
         <div id="simulator-pane">
-            
+
             <!-- Top Section: Inventory Panel -->
             <div class="inventory-section">
                 <div class="section-header">
@@ -47,25 +49,25 @@
                         </button>
                     </div>
                 </div>
-                
+
                 <!-- Inventory Grid -->
                 <div id="sim-inventory-grid" class="inventory-grid">
                     <!-- Products will be rendered here by simulation.js -->
                 </div>
             </div>
-            
+
             <!-- HORIZONTAL DIVIDER -->
             <div class="resizable-divider horizontal"></div>
-            
+
             <!-- Bottom Section: Exercise & Instructions -->
             <div class="exercise-section">
                 <div class="exercise-header">
-                    <h3>Exercises & Instructions</h3>
                 </div>
                 <div class="exercise-content">
                     <div class="exercise-item">
                         <h4>Current Exercise</h4>
-                        <p>Practice adding and managing products in the inventory system. Start by reviewing the default "Oxford Shirt" item, then try adding your own products.</p>
+                        <p>Practice adding and managing products in the inventory system. Start by reviewing the default
+                            "Oxford Shirt" item, then try adding your own products.</p>
                     </div>
                     <div class="exercise-item">
                         <h4>Instructions</h4>
@@ -86,17 +88,17 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- VERTICAL DIVIDER -->
         <div id="classroom-divider" class="resizable-divider vertical"></div>
-        
+
         <!-- RIGHT SIDE: Tutor Chat (30%) -->
         <div id="tutor-pane">
             <div class="tutor-header">
                 <h2>ModaPro Tutor</h2>
                 <p>AI-powered guidance</p>
             </div>
-            
+
             <!-- Mode Selector -->
             <div class="tutor-mode">
                 <label>Learning Mode:</label>
@@ -106,7 +108,7 @@
                     <option value="realistic">Realistic (Manager)</option>
                 </select>
             </div>
-            
+
             <!-- Chat History (Scrollable) -->
             <div id="tutor-chat-history" class="tutor-chat-history">
                 <div class="tutor-message tutor-system">
@@ -115,22 +117,17 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Chat Input -->
             <div class="tutor-input">
-                <input 
-                    type="text" 
-                    id="tutor-user-input" 
-                    placeholder="Ask me anything..."
-                    autocomplete="off"
-                />
+                <input type="text" id="tutor-user-input" placeholder="Ask me anything..." autocomplete="off" />
                 <button id="tutor-send-btn" class="btn-send">
                     <i class="fas fa-paper-plane"></i>
                 </button>
             </div>
         </div>
     </div>
-    
+
     <!-- MODAL: Add Product -->
     <div id="sim-add-item-modal" class="modal hidden">
         <div class="modal-content">
@@ -141,7 +138,7 @@
             <form id="sim-add-product-form">
                 <label>Product Name *</label>
                 <input type="text" name="name" required placeholder="e.g. Vintage Denim Jacket">
-                
+
                 <label>Category *</label>
                 <select name="category" required>
                     <option value="Men">Men</option>
@@ -149,10 +146,10 @@
                     <option value="Kids">Kids</option>
                     <option value="Accessories">Accessories</option>
                 </select>
-                
+
                 <label>Price (€) *</label>
                 <input type="number" name="price" step="0.01" required placeholder="0.00">
-                
+
                 <div class="button-group">
                     <button type="button" id="sim-btn-cancel-modal" class="btn btn-secondary">Cancel</button>
                     <button type="submit" class="btn btn-primary">Add Product</button>
@@ -160,7 +157,7 @@
             </form>
         </div>
     </div>
-    
+
     <!-- MODAL: Edit Product -->
     <div id="sim-edit-item-modal" class="modal hidden">
         <div class="modal-content">
@@ -170,10 +167,10 @@
             </div>
             <form id="sim-edit-product-form">
                 <input type="hidden" name="id">
-                
+
                 <label>Product Name *</label>
                 <input type="text" name="name" required>
-                
+
                 <label>Category *</label>
                 <select name="category" required>
                     <option value="Men">Men</option>
@@ -181,10 +178,10 @@
                     <option value="Kids">Kids</option>
                     <option value="Accessories">Accessories</option>
                 </select>
-                
+
                 <label>Price (€) *</label>
                 <input type="number" name="price" step="0.01" required>
-                
+
                 <div class="button-group">
                     <button type="button" id="sim-btn-cancel-edit-modal" class="btn btn-secondary">Cancel</button>
                     <button type="submit" class="btn btn-primary">Update</button>
@@ -192,7 +189,7 @@
             </form>
         </div>
     </div>
-    
+
     <!-- MODAL: Add Variant -->
     <div id="sim-variant-modal" class="modal hidden">
         <div class="modal-content">
@@ -203,7 +200,7 @@
             <form id="sim-variant-form">
                 <label>Color *</label>
                 <input type="text" name="color" required placeholder="e.g. Red">
-                
+
                 <label>Size *</label>
                 <select name="size" required>
                     <option value="XS">XS</option>
@@ -214,10 +211,10 @@
                     <option value="XXL">XXL</option>
                     <option value="OneSize">One Size</option>
                 </select>
-                
+
                 <label>Stock *</label>
                 <input type="number" name="stock" min="0" value="0" required>
-                
+
                 <div class="button-group">
                     <button type="button" id="sim-btn-cancel-variant-modal" class="btn btn-secondary">Cancel</button>
                     <button type="submit" class="btn btn-primary">Add Variant</button>
@@ -225,7 +222,7 @@
             </form>
         </div>
     </div>
-    
+
     <!-- MODAL: Edit Variant -->
     <div id="sim-edit-variant-modal" class="modal hidden">
         <div class="modal-content">
@@ -236,7 +233,7 @@
             <form id="sim-edit-variant-form">
                 <label>Color *</label>
                 <input type="text" name="color" required>
-                
+
                 <label>Size *</label>
                 <select name="size" required>
                     <option value="XS">XS</option>
@@ -247,21 +244,23 @@
                     <option value="XXL">XXL</option>
                     <option value="OneSize">One Size</option>
                 </select>
-                
+
                 <label>Stock *</label>
                 <input type="number" name="stock" min="0" required>
-                
+
                 <div class="button-group">
-                    <button type="button" id="sim-btn-cancel-edit-variant-modal" class="btn btn-secondary">Cancel</button>
+                    <button type="button" id="sim-btn-cancel-edit-variant-modal"
+                        class="btn btn-secondary">Cancel</button>
                     <button type="submit" class="btn btn-primary">Update Variant</button>
                 </div>
             </form>
         </div>
     </div>
-    
+
     <!-- Scripts -->
     <script src="../exercises/hint-overlay.js"></script>
     <script src="../exercises/exercise-engine.js"></script>
     <script src="classroom.js"></script>
 </body>
+
 </html>
