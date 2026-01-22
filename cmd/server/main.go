@@ -52,20 +52,24 @@ func main() {
 		log.Fatal("db init:", err)
 	}
 
-	// Landing page - displays simple API info message (either use this)*
-	//	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-	//		w.Write([]byte("<h1>Learning Platform API</h1><p>Use /api/login to authenticate</p>"))
-	//	})
-
 	// session service (in-memory)
 	sessionService := session.InMemoryService()
 	chatHandler := handlers.NewChatHandler(sessionService)
 
-	// (Katerina) ADDED: Page routes - serve HTML/CSS files to browser
-	http.HandleFunc("/", handlers.ServeLogin) // *(or this does the same)
+	// Page routes - serve HTML/CSS files to browser
+	// Root landing page
+	http.HandleFunc("/", handlers.ServePreLogin)
+	http.HandleFunc("/flow.js", handlers.ServePreLogin)
+	http.HandleFunc("/assets/", handlers.ServePreLogin)
+	// Login page
+	http.HandleFunc("/login", handlers.ServeLogin)
+	http.HandleFunc("/login.html", handlers.ServeLogin)
 	http.HandleFunc("/styles.css", handlers.ServeCSS)
 	http.HandleFunc("/login.js", handlers.ServeJS)
 	http.HandleFunc("/dashboard.html", handlers.ServeDashboard)
+
+	// Serve files under /web/ directly from the repo's web/ folder
+	http.Handle("/web/", http.StripPrefix("/web/", http.FileServer(http.Dir("web/"))))
 	http.HandleFunc("/classroom/", handlers.ServeClassroom)
 
 	// (Katerina) ADDED: API routes - handle authentication logic

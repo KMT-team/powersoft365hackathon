@@ -11,7 +11,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// User credentials from login/register request (Katerina) ADDED: more parameters to match frontend
+// User request data
 type User struct {
 	Email           string `json:"email"`
 	Identifier      string `json:"identifier"`
@@ -90,7 +90,7 @@ func setSessionCookie(w http.ResponseWriter, sid string, expires time.Time) {
 	})
 }
 
-// HandleRegister creates a new user account and issues a session cookie (Katerina) ADDED: edited the syntax to match the user data
+// HandleRegister creates user account and session
 func HandleRegister(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -103,18 +103,15 @@ func HandleRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Frontend sends identifier field as email in register mode
 	if u.Identifier != "" {
 		u.Email = u.Identifier
 	}
 
-	// Validate required fields
 	if u.Email == "" || u.Password == "" || u.Username == "" {
 		http.Error(w, "Email, username and password required", http.StatusBadRequest)
 		return
 	}
 
-	// Check passwords match
 	if u.Password != u.ConfirmPassword {
 		http.Error(w, "Passwords do not match", http.StatusBadRequest)
 		return
@@ -130,7 +127,6 @@ func HandleRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Check if user already exists
 	_, _, _, err := GetUserByEmail(u.Email)
 	if err == nil {
 		http.Error(w, "Email already registered", http.StatusConflict)
@@ -153,7 +149,7 @@ func HandleRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Create session and set cookie
+	// Create session
 	expires := time.Now().Add(sessionExpiry)
 	sid, err := CreateSession(id, expires)
 	if err != nil {
@@ -166,7 +162,7 @@ func HandleRegister(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{"message": "Registration successful"})
 }
 
-// HandleLogin authenticates existing user and creates/reuses session (Katerina) ADDED: edited parameters to match the user data
+// HandleLogin authenticates user and creates session
 func HandleLogin(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -179,7 +175,6 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Frontend sends identifier field (email or username)
 	if u.Identifier != "" {
 		u.Email = u.Identifier
 	}
@@ -194,10 +189,8 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Find user
 	userID, storedHash, _, err := GetUserByEmail(u.Email)
 	if err != nil {
-		// user not found -> do not auto-create here
 		if err == sql.ErrNoRows {
 			http.Error(w, "Invalid credentials", http.StatusUnauthorized)
 			return
@@ -206,13 +199,12 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Verify password
 	if !verifyPassword(storedHash, u.Password) {
 		http.Error(w, "Invalid credentials", http.StatusUnauthorized)
 		return
 	}
 
-	// If client has valid session for this user, refresh it
+	// Refresh existing session if valid
 	if cookie, err := r.Cookie("session"); err == nil {
 		if sidUserID, _, err2 := GetSessionUser(cookie.Value); err2 == nil && sidUserID == userID {
 			expires := time.Now().Add(sessionExpiry)
@@ -225,7 +217,7 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Check if user has any active session and reuse it
+	// Reuse active session if exists
 	if existingSID, expires, err := GetActiveSessionByUser(userID); err == nil {
 		setSessionCookie(w, existingSID, expires)
 		w.Header().Set("Content-Type", "application/json")
@@ -246,10 +238,9 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{"message": "Login successful"})
 }
 
-// HandleLogout ends user session and clears authentication POST ONLY
+// HandleLogout ends session
 func HandleLogout(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		// allow only POST for logout
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
@@ -269,21 +260,19 @@ func HandleLogout(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{"message": "logged out"})
 }
 
-// (Katerina) ADDED: guest login functionality
+// HandleGuestLogin creates guest session
 func HandleGuestLogin(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
-	// 1. Ensure a real guest user exists
 	guestEmail := "guest@system.local"
-	guestPasswordHash := "" // no password needed
+	guestPasswordHash := ""
 	guestSalt := ""
 
 	guestID, _, _, err := GetUserByEmail(guestEmail)
 	if err == sql.ErrNoRows {
-		// Create guest user if missing
 		guestID, err = CreateUser(guestEmail, guestPasswordHash, guestSalt)
 		if err != nil {
 			http.Error(w, "Could not create guest user", http.StatusInternalServerError)
@@ -294,7 +283,7 @@ func HandleGuestLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 2. Create a session for the guest user
+	// Create session
 	expires := time.Now().Add(24 * time.Hour)
 	sid, err := CreateSession(guestID, expires)
 	if err != nil {
@@ -302,7 +291,7 @@ func HandleGuestLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 3. Set session cookie
+	// Set cookie
 	http.SetCookie(w, &http.Cookie{
 		Name:     "session",
 		Value:    sid,
@@ -317,7 +306,7 @@ func HandleGuestLogin(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(`{"message":"guest ok"}`))
 }
 
-// CheckAuth verifies if user is currently logged in and returns email
+// CheckAuth verifies session and returns email
 func CheckAuth(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("session")
 	if err != nil {
@@ -333,14 +322,13 @@ func CheckAuth(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{"email": email})
 }
 
-// (Katerina) ADDED: serve static files for login page
-// Serves styles.css
+// ServeCSS serves styles.css from web directory
 func ServeCSS(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/css")
 	http.ServeFile(w, r, "web/styles.css")
 }
 
-// Serves login.js
+// ServeJS serves login.js
 func ServeJS(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/javascript")
 	http.ServeFile(w, r, "web/login/login.js")
