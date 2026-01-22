@@ -115,6 +115,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   guestLink.addEventListener("click", (e) => {
     e.preventDefault();
+    const guestUser = {
+      name: "Guest",
+      email: "guest@example.com",
+      onboarding: false
+    };
+    localStorage.setItem("user", JSON.stringify(guestUser));
     window.location.href = "dashboard.html";
   });
 

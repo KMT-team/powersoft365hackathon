@@ -17,20 +17,30 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Quicksand:wght@600&display=swap"
+    rel="stylesheet">
   <script src="login.js" defer></script>
 </head>
 
 <body>
   <div class="auth-box" data-mode="login">
-    <!-- Theme Toggle -->
-    <button id="theme-toggle" aria-label="Toggle theme">
-      <i class="fa-solid fa-sun"></i>
-    </button>
+    <!-- Theme Toggle & Home Button -->
+    <div class="auth-controls">
+      <a href="index.html" id="home-btn" aria-label="Back to home">
+        <i class="fa-solid fa-house"></i>
+      </a>
+      <button id="theme-toggle" aria-label="Toggle theme">
+        <i class="fa-solid fa-sun"></i>
+      </button>
+    </div>
 
     <!-- Logo -->
     <div class="logo-text">
-      <h1>Platform</h1>
+      <div class="auth-brand">
+        <img class="brand-mark-sm" src="assets/learnflowy-logo.svg" alt="Learnflowy logo">
+        <span>Learnflowy</span>
+      </div>
     </div>
 
     <!-- Title & description (Login default copy) -->
