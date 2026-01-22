@@ -32,15 +32,15 @@ Google Gemini 1.5 Flash with 3 coaching modes and context-aware responses.
 
 ## API Configuration
 
-- Model: `gemini-1.5-flash`
+- Model: `gemini-3-flash-preview`
 - Temperature: 0.7 (balanced)
-- Max tokens: 500
-- Streaming: Enabled
+- Tokens per minute (input) =  250K  
+- Streaming: Enabled 
 
 ## Cost Estimate
 
-**Free tier:** 15 RPM, 1M tokens/day
-**Paid:** 0.10/day for 100 users (10 messages each)
+**Free tier:** 5 RPM, 1M tokens/day , 20 RPD  Requests per day
+**Paid:** [Depending on the model and tier of subscription](https://ai.google.dev/gemini-api/docs/rate-limits) 
 
 ## Future Enhancements
 
