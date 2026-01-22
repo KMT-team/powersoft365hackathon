@@ -6,7 +6,7 @@
   --muted: #A8B3C7;
   --card-border: #22304B;
   --control-border: #22304B;
-  --divider: #22304B;
+  --divider: #9EF01A;
 
   --ring: rgba(59, 130, 246, 0.28);
   --radius: 18px;
@@ -43,7 +43,7 @@
 
   --card-border: #D6DBE1;
   --control-border: #64748B;
-  --divider: #000000;
+  --divider: #9EF01A;
 
   --ring: rgba(37, 99, 235, 0.15);
 
@@ -177,6 +177,30 @@ body.landing .hero-text h1{
   margin: 0 auto;
   width: 100%;
   min-height: calc(100vh - 260px);
+  position: relative;
+}
+
+.hero-flow-line{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 1;
+  pointer-events: none;
+  z-index: 2;
+  mix-blend-mode: lighten;
+  animation: flowLineEnter 0.8s ease-out 0.3s backwards;
+}
+
+@keyframes flowLineEnter {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .hero-text{
@@ -189,6 +213,8 @@ body.landing .hero-text h1{
   margin-left: -20px;
   min-height: auto;
   animation: heroTextEnter 0.8s ease-out forwards;
+  position: relative;
+  z-index: 2;
 }
 
 @keyframes heroTextEnter {
@@ -289,9 +315,10 @@ body.landing .hero-text h1{
   border-radius: 28px;
   background: color-mix(in srgb, var(--surface) 40%, transparent);
   border: 1px solid color-mix(in srgb, var(--card-border) 50%, transparent);
-  overflow: hidden;
+  overflow: visible;
   transform: scale(0.85);
   animation: heroBoxEnter 0.8s ease-out 0.3s backwards;
+  z-index: 1;
 }
 
 @keyframes heroBoxEnter {
@@ -314,6 +341,7 @@ body.landing .hero-text h1{
   object-fit: contain;
   object-position: center;
   transform: translate(30px, 30px);
+  z-index: 1;
 }
 
 .flow-section{
@@ -321,26 +349,65 @@ body.landing .hero-text h1{
   margin: 80px auto 0;
   display: grid;
   grid-template-columns: 1fr;
-  gap: 24px;
+  gap: 28px;
   width: 100%;
 }
 
-.flow-section h2{
-  margin: 0 0 8px 0;
-  font-size: 28px;
+.flow-label{
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 6px 16px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--card-border) 65%, transparent);
+  background: color-mix(in srgb, var(--surface) 78%, transparent);
+  color: var(--text);
+  font-size: 14px;
   font-weight: 600;
-  letter-spacing: -0.4px;
+  letter-spacing: 0.2px;
+  margin-bottom: -8px;
+}
+
+.flow-steps{
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.flow-steps::before{
+  content: "";
+  position: absolute;
+  left: 50%;
+  margin-left: -0.5px;
+  top: var(--flow-line-top, 0px);
+  height: var(--flow-line-height, 100%);
+  width: 1px;
+  border-radius: 0;
+  background: var(--divider);
+  pointer-events: none;
 }
 
 .flow-step{
+  position: relative;
   padding: 18px 22px;
   border-radius: 16px;
   border: 1px solid var(--card-border);
-  background: color-mix(in srgb, var(--surface) 80%, transparent);
-  width: 100%;
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
+  width: calc(50% - 28px);
   opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transform: translateY(10px);
+  transition: opacity 0.6s ease, transform 0.6s ease, background 0.3s ease, box-shadow 0.35s ease;
+}
+
+.flow-step:nth-child(odd){
+  align-self: flex-start;
+}
+
+.flow-step:nth-child(even){
+  align-self: flex-end;
 }
 
 .flow-step.is-visible{
@@ -348,9 +415,14 @@ body.landing .hero-text h1{
   transform: translateY(0);
 }
 
+.flow-step:hover{
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  box-shadow: 0 16px 36px rgba(158, 240, 26, 0.22);
+}
+
 .flow-step h3{
   margin: 0 0 8px 0;
-  font-size: 18px;
+  font-size: 19px;
   font-weight: 600;
   color: var(--text);
 }
@@ -358,6 +430,7 @@ body.landing .hero-text h1{
 .flow-step p{
   margin: 0 0 6px 0;
   color: var(--subtext);
+  font-size: 14px;
 }
 
 .flow-step p:last-child{
@@ -393,7 +466,27 @@ body.landing .hero-text h1{
   display: grid;
   gap: 10px;
   padding-bottom: 22px;
-  border-bottom: 1px solid var(--divider);
+  border-bottom: none;
+  position: relative;
+}
+
+.section-header::after{
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--divider);
+}
+
+.flow-section .section-header{
+  width: max-content;
+  max-width: 100%;
+}
+
+.flow-section .section-header::after{
+  width: 100%;
 }
 
 .section-header h2{
@@ -403,17 +496,83 @@ body.landing .hero-text h1{
   letter-spacing: -0.4px;
 }
 
+.section-header h2 i{
+  margin-right: 10px;
+  color: #00B4D8;
+  font-size: 0.95em;
+}
+
 .section-header p{
   margin: 0;
   color: var(--subtext);
   max-width: 640px;
 }
 
-.cards{
+.who-content{
   margin-top: 28px;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 20px;
+  grid-template-columns: minmax(0, 1fr) max-content;
+  gap: 80px;
+  align-items: start;
+  padding: 0 88px;
+}
+
+.section.who-its-for{
+  margin-left: auto;
+}
+
+.who-image-col{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.who-plain-image{
+  width: 100%;
+  max-width: 860px;
+  height: auto;
+  display: block;
+}
+
+.who-right{
+  display: grid;
+  gap: 18px;
+  padding-left: 0;
+  transform: none;
+  justify-self: end;
+  justify-items: end;
+}
+
+.who-list{
+  display: grid;
+  gap: 18px;
+  margin-top: 0;
+  justify-items: end;
+}
+
+.who-list .card{
+  position: relative;
+  width: min(640px, 100%);
+  padding: 16px 20px 16px 44px;
+  border-radius: 14px;
+}
+
+.who-list .card::before{
+  content: "\2713";
+  position: absolute;
+  left: 20px;
+  top: 22px;
+  color: #00B4D8;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.who-list .card h3{
+  font-size: 16px;
+}
+
+.who-list .card p{
+  font-size: 14px;
 }
 
 .card{

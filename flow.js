@@ -61,6 +61,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const steps = document.querySelectorAll(".flow-step");
   const revealSections = document.querySelectorAll(".reveal-section");
+  const flowSteps = document.querySelector(".flow-steps");
+  const updateFlowLineMetrics = () => {
+    if (!flowSteps || steps.length < 2) return;
+    const containerRect = flowSteps.getBoundingClientRect();
+    const firstRect = steps[0].getBoundingClientRect();
+    const lastRect = steps[steps.length - 1].getBoundingClientRect();
+
+    const firstCenter = firstRect.top + firstRect.height / 2;
+    const lastCenter = lastRect.top + lastRect.height / 2;
+
+    const topPx = Math.max(0, firstCenter - containerRect.top);
+    const heightPx = Math.max(0, lastCenter - firstCenter);
+
+    flowSteps.style.setProperty("--flow-line-top", `${topPx.toFixed(1)}px`);
+    flowSteps.style.setProperty("--flow-line-height", `${heightPx.toFixed(1)}px`);
+  };
+  updateFlowLineMetrics();
+  window.addEventListener("resize", updateFlowLineMetrics);
+
   if (!("IntersectionObserver" in window)) {
     steps.forEach((step) => step.classList.add("is-visible"));
     revealSections.forEach((section) => section.classList.add("is-visible"));
@@ -72,6 +91,9 @@ document.addEventListener("DOMContentLoaded", () => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           entry.target.classList.add("is-visible");
+          if (entry.target.classList.contains("flow-step")) {
+            updateFlowLineMetrics();
+          }
         }
       });
     },
