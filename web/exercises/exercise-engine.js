@@ -35,9 +35,10 @@ const exercises = [
         description: 'Click "Add New Product" and create any product you like. Fill in the name, category, and price.',
         hints: [
             { target: '#sim-btn-add-item', text: 'Click here to add a new product', step: 'click' },
-            { target: 'input[name="name"]', text: 'Enter a product name (e.g., "Blue Jeans")', step: 'fill' },
-            { target: 'select[name="category"]', text: 'Select a category', step: 'fill' },
-            { target: 'input[name="price"]', text: 'Enter a price (e.g., 49.99)', step: 'fill' }
+            { target: 'input[name="name"]', text: 'Enter a product name (e.g., "Blue Jeans")', step: 'fill-name' },
+            { target: 'select[name="category"]', text: 'Select a category', step: 'fill-category' },
+            { target: 'input[name="price"]', text: 'Enter a price (e.g., 49.99)', step: 'fill-price' },
+            { target: 'button.btn-primary[onclick*="addItem"]', text: 'Click Save to finish', step: 'save' }
         ],
         currentStep: 'click',
         validate: () => {
@@ -51,16 +52,17 @@ const exercises = [
         description: 'Edit the product you just created. Change its name to "Summer Jacket", category to "Women", and price to €89.99.',
         hints: [
             { target: '.edit-btn:not([disabled])', text: 'Click Edit on your product', step: 'click' },
-            { target: '#sim-edit-item-modal input[name="name"]', text: 'Change name to "Summer Jacket"', step: 'fill' },
-            { target: '#sim-edit-item-modal select[name="category"]', text: 'Change category to "Women"', step: 'fill' },
-            { target: '#sim-edit-item-modal input[name="price"]', text: 'Change price to 89.99', step: 'fill' }
+            { target: '#sim-edit-item-modal input[name="name"]', text: 'Change name to "Summer Jacket"', step: 'edit-name' },
+            { target: '#sim-edit-item-modal select[name="category"]', text: 'Change category to "Women"', step: 'edit-category' },
+            { target: '#sim-edit-item-modal input[name="price"]', text: 'Change price to 89.99', step: 'edit-price' },
+            { target: '#sim-edit-item-modal button.btn-primary', text: 'Click Save Changes', step: 'save' }
         ],
         currentStep: 'click',
         validate: () => {
             const inventory = JSON.parse(localStorage.getItem('sim_inventory_v1') || '[]');
-            return inventory.some(p => 
-                p.name === 'Summer Jacket' && 
-                p.category === 'Women' && 
+            return inventory.some(p =>
+                p.name === 'Summer Jacket' &&
+                p.category === 'Women' &&
                 p.price === 89.99
             );
         }
@@ -71,9 +73,10 @@ const exercises = [
         description: 'Add a variant to your "Summer Jacket". Choose any color and size, and set stock to at least 5 units.',
         hints: [
             { target: 'button[onclick*="openVariantModal"]', text: 'Click "+ Add Variant" on your product', step: 'click' },
-            { target: 'input[name="color"]', text: 'Enter a color (e.g., "Blue")', step: 'fill' },
-            { target: 'select[name="size"]', text: 'Select a size', step: 'fill' },
-            { target: 'input[name="stock"]', text: 'Enter stock (at least 5)', step: 'fill' }
+            { target: 'input[name="color"]', text: 'Enter a color (e.g., "Blue")', step: 'fill-color' },
+            { target: 'select[name="size"]', text: 'Select a size', step: 'fill-size' },
+            { target: 'input[name="stock"]', text: 'Enter stock (at least 5)', step: 'fill-stock' },
+            { target: '#sim-variant-modal button.btn-primary', text: 'Click Save Variant', step: 'save' }
         ],
         currentStep: 'click',
         validate: () => {
@@ -95,24 +98,18 @@ const exercises = [
             const inventory = JSON.parse(localStorage.getItem('sim_inventory_v1') || '[]');
             const jacket = inventory.find(p => p.name === 'Summer Jacket');
             if (!jacket || !jacket.variants || jacket.variants.length === 0) return false;
-            
+
             const logs = getExerciseLogs();
             const hasSell = logs.some(log => log.includes('Sold'));
             const hasDamage = logs.some(log => log.includes('Damaged'));
-            
-            // Debug: log the state for troubleshooting
-            console.log('[Ex4] Logs:', logs, 'Sell:', hasSell, 'Damage:', hasDamage);
-            
+
             const ex = exercises[3];
             // If sell done but damage not done, move to damage step
             if (hasSell && !hasDamage && ex.currentStep === 'sell') {
                 ex.currentStep = 'damage';
-                if (window.clearHints) window.clearHints();
-                if (hintsEnabled && window.renderHints) {
-                    window.renderHints(ex.hints.filter(h => h.step === 'damage'));
-                }
+                forceUpdateHints(ex);
             }
-            
+
             return hasSell && hasDamage;
         }
     },
@@ -122,7 +119,8 @@ const exercises = [
         description: 'Edit your variant to set stock to exactly 20, then perform one more Sell and one more Damage action.',
         hints: [
             { target: '.edit-variant-btn', text: 'Click Edit on your variant', step: 'edit' },
-            { target: '#sim-edit-variant-modal input[name="stock"]', text: 'Change stock to exactly 20', step: 'fill' },
+            { target: '#sim-edit-variant-modal input[name="stock"]', text: 'Change stock to exactly 20', step: 'fill-stock' },
+            { target: '#sim-edit-variant-modal button.btn-primary', text: 'Click Save', step: 'save' },
             { target: '.sell-btn', text: 'Click Sell to reduce stock by 1', step: 'sell2' },
             { target: '.damage-btn', text: 'Click Damage to mark 1 unit as damaged', step: 'damage2' }
         ],
@@ -131,33 +129,33 @@ const exercises = [
             const inventory = JSON.parse(localStorage.getItem('sim_inventory_v1') || '[]');
             const jacket = inventory.find(p => p.name === 'Summer Jacket');
             if (!jacket || !jacket.variants || jacket.variants.length === 0) return false;
-            
+
             // Check if any variant has stock of 20 or close to it (accounting for sells/damages)
             const hasStock20 = jacket.variants.some(v => v.stock === 20 || v.stock === 19 || v.stock === 18);
-            
+
             const logs = getExerciseLogs();
             const sellCount = logs.filter(log => log.includes('Sold')).length;
             const damageCount = logs.filter(log => log.includes('Damaged')).length;
-            
+
             const ex = exercises[4];
-            
-            // Progress through steps
-            if (hasStock20 && ex.currentStep === 'edit') {
-                ex.currentStep = 'fill';
-            } else if (hasStock20 && ex.currentStep === 'fill') {
-                ex.currentStep = 'sell2';
-                if (window.clearHints) window.clearHints();
-                if (hintsEnabled && window.renderHints) {
-                    window.renderHints(ex.hints.filter(h => h.step === 'sell2'));
+
+            // We'll let the step checker handle the finer modal steps (edit -> fill-stock -> save)
+            // Here we mainly handle the post-modal steps
+
+            // If stock is correct and modal is closed (implied), move to sell2
+            const editModal = document.getElementById('sim-edit-variant-modal');
+            const isModalClosed = !editModal || editModal.classList.contains('hidden');
+
+            if (hasStock20 && isModalClosed && ['edit', 'fill-stock', 'save'].includes(ex.currentStep)) {
+                if (ex.currentStep !== 'sell2') {
+                    ex.currentStep = 'sell2';
+                    forceUpdateHints(ex);
                 }
-            } else if (sellCount >= 1 && ex.currentStep === 'sell2') {
+            } else if (hasStock20 && sellCount >= 1 && ex.currentStep === 'sell2') {
                 ex.currentStep = 'damage2';
-                if (window.clearHints) window.clearHints();
-                if (hintsEnabled && window.renderHints) {
-                    window.renderHints(ex.hints.filter(h => h.step === 'damage2'));
-                }
+                forceUpdateHints(ex);
             }
-            
+
             // Complete when all steps done
             return hasStock20 && sellCount >= 1 && damageCount >= 1;
         }
@@ -193,7 +191,7 @@ function clearExerciseLogs() {
 function renderExerciseLogs() {
     const logContainer = document.getElementById('exercise-activity-log');
     if (!logContainer) return;
-    
+
     const logs = getExerciseLogs();
     if (logs.length === 0) {
         logContainer.innerHTML = '<p class="muted">No activity yet.</p>';
@@ -223,7 +221,7 @@ function getCurrentExercise() {
 
 function updateExerciseUI() {
     if (!exerciseContent) return;
-    
+
     if (currentExercise === 0 || allCompleted) {
         renderExerciseList();
     } else {
@@ -249,24 +247,24 @@ function updateExerciseUI() {
             `;
         }
     }
-    
+
     const hintsToggle = document.getElementById('hints-toggle');
     if (hintsToggle) {
         hintsToggle.classList.toggle('active', hintsEnabled);
-        hintsToggle.innerHTML = hintsEnabled 
-            ? '<i class="fas fa-lightbulb"></i> Hints ON' 
+        hintsToggle.innerHTML = hintsEnabled
+            ? '<i class="fas fa-lightbulb"></i> Hints ON'
             : '<i class="far fa-lightbulb"></i> Hints OFF';
     }
-    
+
     updateSimulationsButton();
 }
 
 function renderExerciseList() {
     if (!exerciseContent) return;
-    
+
     const listHTML = exercises.map(ex => {
         const isCompleted = completions[ex.id] && completions[ex.id] > 0;
-        
+
         // Check if exercise is locked
         let isLocked = false;
         if (ex.id > 1) {
@@ -277,19 +275,19 @@ function renderExerciseList() {
                 }
             }
         }
-        
+
         const buttonHTML = isLocked
             ? `<button class="btn btn-sm btn-secondary" style="opacity: 0.5;" disabled title="Complete Exercise ${ex.id - 1} first">
                 <i class="fas fa-lock"></i> Locked
               </button>`
             : isCompleted
-            ? `<button class="btn btn-sm btn-success" style="cursor: default;" disabled>
+                ? `<button class="btn btn-sm btn-success" style="cursor: default;" disabled>
                 <i class="fas fa-check"></i> Completed!
               </button>`
-            : `<button class="btn btn-sm btn-primary start-exercise-btn" data-exercise="${ex.id}">
+                : `<button class="btn btn-sm btn-primary start-exercise-btn" data-exercise="${ex.id}">
                 Start
               </button>`;
-        
+
         return `
             <div class="exercise-list-item" data-exercise="${ex.id}">
                 <h4>${ex.title}</h4>
@@ -298,7 +296,7 @@ function renderExerciseList() {
             </div>
         `;
     }).join('');
-    
+
     exerciseContent.innerHTML = `
         <div class="exercise-item">
             <h4>Available Exercises</h4>
@@ -306,7 +304,7 @@ function renderExerciseList() {
         </div>
         ${listHTML}
     `;
-    
+
     document.querySelectorAll('.start-exercise-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const exId = parseInt(e.target.closest('button').dataset.exercise);
@@ -329,7 +327,7 @@ function startExercise(exId) {
             }
         }
     }
-    
+
     // If redoing a completed exercise, remove the completion
     if (completions[exId] && completions[exId] > 0) {
         completions[exId]--;
@@ -338,20 +336,20 @@ function startExercise(exId) {
         }
         localStorage.setItem(EXERCISE_COMPLETION_KEY, JSON.stringify(completions));
     }
-    
+
     currentExercise = exId;
     allCompleted = false;
     localStorage.setItem(EXERCISE_STORAGE_KEY, exId.toString());
-    
+
     clearExerciseLogs();
-    
+
     const exercise = exercises.find(ex => ex.id === exId);
     if (exercise) {
         exercise.currentStep = exercise.hints[0].step;
     }
-    
+
     updateExerciseUI();
-    
+
     if (window.clearHints) window.clearHints();
     if (hintsEnabled && window.renderHints && exercise) {
         const firstHints = exercise.hints.filter(h => h.step === exercise.hints[0].step);
@@ -361,13 +359,17 @@ function startExercise(exId) {
 
 function checkExerciseCompletion() {
     if (currentExercise === 0 || allCompleted) return;
-    
+
     const exercise = getCurrentExercise();
     if (!exercise) return;
-    
+
     if (exercise.validate()) {
         completeExercise();
     } else {
+        // Continuous checks
+        checkContext(exercise);
+        checkStepProgress(exercise);
+
         // Check for specific errors
         validateExerciseStep(exercise);
     }
@@ -380,12 +382,12 @@ function validateExerciseStep(exercise) {
         const hasProduct = inventory.filter(p => p.editable !== false).length > 0;
         if (!hasProduct) return; // Still waiting, no error yet
     }
-    
+
     if (exercise.id === 2) {
         const inventory = JSON.parse(localStorage.getItem('sim_inventory_v1') || '[]');
         const wrongName = inventory.some(p => p.name === 'Summer Jacket' && p.category !== 'Women');
         const wrongPrice = inventory.some(p => p.name === 'Summer Jacket' && p.price !== 89.99);
-        
+
         if (wrongName) {
             if (window.showToast) window.showToast('💡 Check the product category - it should be "Women"', false);
         }
@@ -393,7 +395,7 @@ function validateExerciseStep(exercise) {
             if (window.showToast) window.showToast('💡 Check the price - it should be €89.99', false);
         }
     }
-    
+
     if (exercise.id === 3) {
         const inventory = JSON.parse(localStorage.getItem('sim_inventory_v1') || '[]');
         const jacket = inventory.find(p => p.name === 'Summer Jacket');
@@ -411,123 +413,123 @@ function validateExerciseStep(exercise) {
 function completeExercise() {
     const exercise = getCurrentExercise();
     if (!exercise) return;
-    
+
     completions[exercise.id] = (completions[exercise.id] || 0) + 1;
     localStorage.setItem(EXERCISE_COMPLETION_KEY, JSON.stringify(completions));
-    
+
     if (window.showToast) {
         window.showToast(`${exercise.title} completed!`);
     }
-    
+
     currentExercise = 0;
     allCompleted = true;
     localStorage.setItem(EXERCISE_STORAGE_KEY, '0');
-    
+
     if (window.clearHints) window.clearHints();
-    
+
     updateExerciseUI();
 }
 
 function restartExercise() {
-  const exercise = getCurrentExercise();
-  if (!exercise) return;
+    const exercise = getCurrentExercise();
+    if (!exercise) return;
 
-  // 1. Ask for confirmation
-  const confirmed = confirm('Restart this exercise? Your progress in this exercise will be reset.');
-  if (!confirmed) return;
+    // 1. Ask for confirmation
+    const confirmed = confirm('Restart this exercise? Your progress in this exercise will be reset.');
+    if (!confirmed) return;
 
-  const exId = exercise.id;
-  const inventory = JSON.parse(localStorage.getItem('sim_inventory_v1') || '[]');
+    const exId = exercise.id;
+    const inventory = JSON.parse(localStorage.getItem('sim_inventory_v1') || '[]');
 
-  // 2. Revert changes based on exercise ID
-  switch (exId) {
-    case 1:
-      // Remove all user-added products (keep only default items)
-      const preserved = inventory.filter(p => p.editable === false);
-      localStorage.setItem('sim_inventory_v1', JSON.stringify(preserved));
-      break;
+    // 2. Revert changes based on exercise ID
+    switch (exId) {
+        case 1:
+            // Remove all user-added products (keep only default items)
+            const preserved = inventory.filter(p => p.editable === false);
+            localStorage.setItem('sim_inventory_v1', JSON.stringify(preserved));
+            break;
 
-    case 2:
-      // Reset editable product to default state
-      const product = inventory.find(p => p.editable !== false);
-      if (product) {
-        product.name = 'New Product';
-        product.category = 'Men';
-        product.price = 0;
-        localStorage.setItem('sim_inventory_v1', JSON.stringify(inventory));
-      }
-      break;
+        case 2:
+            // Reset editable product to default state
+            const product = inventory.find(p => p.editable !== false);
+            if (product) {
+                product.name = 'New Product';
+                product.category = 'Men';
+                product.price = 0;
+                localStorage.setItem('sim_inventory_v1', JSON.stringify(inventory));
+            }
+            break;
 
-    case 3:
-      // Remove all variants from Summer Jacket
-      const jacket3 = inventory.find(p => p.name === 'Summer Jacket');
-      if (jacket3) {
-        jacket3.variants = [];
-        localStorage.setItem('sim_inventory_v1', JSON.stringify(inventory));
-      }
-      break;
+        case 3:
+            // Remove all variants from Summer Jacket
+            const jacket3 = inventory.find(p => p.name === 'Summer Jacket');
+            if (jacket3) {
+                jacket3.variants = [];
+                localStorage.setItem('sim_inventory_v1', JSON.stringify(inventory));
+            }
+            break;
 
-    case 4:
-      // Reset variant stock to 5
-      const jacket4 = inventory.find(p => p.name === 'Summer Jacket');
-      if (jacket4?.variants?.length > 0) {
-        jacket4.variants[0].stock = 5;
-        localStorage.setItem('sim_inventory_v1', JSON.stringify(inventory));
-      }
-      break;
+        case 4:
+            // Reset variant stock to 5
+            const jacket4 = inventory.find(p => p.name === 'Summer Jacket');
+            if (jacket4?.variants?.length > 0) {
+                jacket4.variants[0].stock = 5;
+                localStorage.setItem('sim_inventory_v1', JSON.stringify(inventory));
+            }
+            break;
 
-    case 5:
-      // Reset variant stock to 3
-      const jacket5 = inventory.find(p => p.name === 'Summer Jacket');
-      if (jacket5?.variants?.length > 0) {
-        jacket5.variants[0].stock = 3;
-        localStorage.setItem('sim_inventory_v1', JSON.stringify(inventory));
-      }
-      break;
+        case 5:
+            // Reset variant stock to 3
+            const jacket5 = inventory.find(p => p.name === 'Summer Jacket');
+            if (jacket5?.variants?.length > 0) {
+                jacket5.variants[0].stock = 3;
+                localStorage.setItem('sim_inventory_v1', JSON.stringify(inventory));
+            }
+            break;
 
-    default:
-      console.warn('Unknown exercise ID:', exId);
-  }
+        default:
+            console.warn('Unknown exercise ID:', exId);
+    }
 
-  // 3. Clear logs
-  localStorage.setItem('sim_inventory_logs_v1', JSON.stringify([]));
-  clearExerciseLogs?.();
+    // 3. Clear logs
+    localStorage.setItem('sim_inventory_logs_v1', JSON.stringify([]));
+    clearExerciseLogs?.();
 
-  // 4. Reset exercise step to beginning
-  exercise.currentStep = exercise.hints?.[0]?.step || 0;
+    // 4. Reset exercise step to beginning
+    exercise.currentStep = exercise.hints?.[0]?.step || 0;
 
-  // 5. Reload to refresh UI
-  window.location.reload();
+    // 5. Reload to refresh UI
+    window.location.reload();
 }
 
 
 function restartAll() {
     if (!confirm('Reset all exercise progress AND clear all inventory? This cannot be undone.')) return;
-    
+
     // Clear exercise progress
     localStorage.setItem(EXERCISE_STORAGE_KEY, '0');
     localStorage.setItem(EXERCISE_COMPLETION_KEY, '{}');
     localStorage.setItem(EXERCISE_LOGS_KEY, '[]');
-    
+
     // Also clear the simulation inventory
     localStorage.setItem('sim_inventory_v1', JSON.stringify(INITIAL_INVENTORY.slice ? INITIAL_INVENTORY.slice() : []));
     localStorage.setItem('sim_inventory_logs_v1', JSON.stringify([]));
-    
+
     currentExercise = 0;
     completions = {};
     allCompleted = false;
-    
+
     exercises.forEach(ex => {
         if (ex.currentStep) ex.currentStep = ex.hints[0].step;
     });
-    
+
     if (window.clearHints) window.clearHints();
-    
+
     // Reload inventory in classroom
     if (window.reloadInventory) window.reloadInventory();
-    
+
     updateExerciseUI();
-    
+
     if (window.showToast) {
         window.showToast('All progress and inventory reset');
     }
@@ -537,7 +539,7 @@ function toggleHints() {
     hintsEnabled = !hintsEnabled;
     localStorage.setItem(HINTS_STORAGE_KEY, hintsEnabled.toString());
     updateExerciseUI();
-    
+
     if (hintsEnabled && window.renderHints) {
         const exercise = getCurrentExercise();
         if (exercise) {
@@ -552,108 +554,150 @@ function toggleHints() {
 function updateSimulationsButton() {
     const simulationsBtn = document.getElementById('simulations-btn');
     if (!simulationsBtn) return;
-    
+
     simulationsBtn.disabled = false;
     simulationsBtn.style.opacity = '1';
+}
+
+// ==================== HELPER FUNCTIONS ====================
+function forceUpdateHints(exercise) {
+    if (window.clearHints) window.clearHints();
+    if (hintsEnabled && window.renderHints && exercise) {
+        const currentHints = exercise.hints.filter(h => h.step === exercise.currentStep);
+        window.renderHints(currentHints);
+    }
+}
+
+function advanceStep(exercise) {
+    // Get unique steps in order
+    const steps = [...new Set(exercise.hints.map(h => h.step))];
+    const currentIndex = steps.indexOf(exercise.currentStep);
+
+    if (currentIndex >= 0 && currentIndex < steps.length - 1) {
+        exercise.currentStep = steps[currentIndex + 1];
+        forceUpdateHints(exercise);
+    }
+}
+
+function checkStepProgress(exercise) {
+    if (!exercise) return;
+
+    const currentHints = exercise.hints.filter(h => h.step === exercise.currentStep);
+    if (!currentHints || currentHints.length === 0) return;
+
+    const hint = currentHints[0];
+    const el = document.querySelector(hint.target);
+
+    // Auto-advance for input/select fields when filled
+    if (el && (el.tagName === 'INPUT' || el.tagName === 'SELECT')) {
+        // Don't advance if user is currently focused on it (typing)
+        if (document.activeElement === el) return;
+
+        if (el.value && el.value.trim() !== '') {
+            // Specific validation
+            if (hint.target.includes('price')) {
+                if (isNaN(parseFloat(el.value))) return;
+            }
+            if (hint.target.includes('stock')) {
+                if (isNaN(parseInt(el.value))) return;
+            }
+
+            // Should properly check if value matches expectation for exercises that require it
+            if (exercise.id === 2 && hint.step === 'edit-name' && el.value !== 'Summer Jacket') return;
+            if (exercise.id === 2 && hint.step === 'edit-category' && el.value !== 'Women') return;
+            // Value check for price is tricky due to float, let loose for now or strictly check
+            if (exercise.id === 2 && hint.step === 'edit-price' && parseFloat(el.value) !== 89.99) return;
+
+            // Ex 5 check
+            if (exercise.id === 5 && hint.step === 'fill-stock' && parseInt(el.value) !== 20) return;
+
+            advanceStep(exercise);
+        }
+    }
+}
+
+function checkContext(exercise) {
+    if (!exercise) return;
+
+    const checkModal = (modalId, steps) => {
+        const modal = document.getElementById(modalId);
+        const isHidden = !modal || modal.classList.contains('hidden');
+
+        if (steps.includes(exercise.currentStep)) {
+            // We should be in modal, but it's hidden -> REVERT
+            if (isHidden) {
+                // Revert to the step that opens the modal
+                // Usually 'click' or 'edit'
+                const resetStep = (exercise.id === 5) ? 'edit' : 'click';
+                if (exercise.currentStep !== resetStep) {
+                    exercise.currentStep = resetStep;
+                    forceUpdateHints(exercise);
+                }
+            }
+        } else if (!isHidden && exercise.currentStep === (exercise.id === 5 ? 'edit' : 'click')) {
+            // Modal is OPEN, but we are still on 'click'/'edit' step -> ADVANCE
+            // This covers the case where they clicked the button but we missed the event
+            // Advance to the first step inside modal
+            advanceStep(exercise);
+        }
+    };
+
+    if (exercise.id === 1) {
+        checkModal('sim-add-item-modal', ['fill-name', 'fill-category', 'fill-price', 'save']);
+    } else if (exercise.id === 2) {
+        checkModal('sim-edit-item-modal', ['edit-name', 'edit-category', 'edit-price', 'save']);
+    } else if (exercise.id === 3) {
+        checkModal('sim-variant-modal', ['fill-color', 'fill-size', 'fill-stock', 'save']);
+    } else if (exercise.id === 5) {
+        checkModal('sim-edit-variant-modal', ['fill-stock', 'save']);
+    }
 }
 
 // ==================== MODAL OBSERVER ====================
 function observeModals() {
     const observer = new MutationObserver(() => {
-        const addModal = document.getElementById('sim-add-item-modal');
-        const editModal = document.getElementById('sim-edit-item-modal');
-        const variantModal = document.getElementById('sim-variant-modal');
-        const editVariantModal = document.getElementById('sim-edit-variant-modal');
-        
-        if (addModal && !addModal.classList.contains('hidden')) {
-            const exercise = getCurrentExercise();
-            if (exercise && exercise.id === 1 && exercise.currentStep === 'click') {
-                exercise.currentStep = 'fill';
-                if (window.clearHints) window.clearHints();
-                if (hintsEnabled && window.renderHints) {
-                    window.renderHints(exercise.hints.filter(h => h.step === 'fill'));
-                }
-            }
-        }
-        
-        if (editModal && !editModal.classList.contains('hidden')) {
-            const exercise = getCurrentExercise();
-            if (exercise && exercise.id === 2 && exercise.currentStep === 'click') {
-                exercise.currentStep = 'fill';
-                if (window.clearHints) window.clearHints();
-                if (hintsEnabled && window.renderHints) {
-                    window.renderHints(exercise.hints.filter(h => h.step === 'fill'));
-                }
-            }
-        }
-        
-        if (variantModal && !variantModal.classList.contains('hidden')) {
-            const exercise = getCurrentExercise();
-            if (exercise && exercise.id === 3 && exercise.currentStep === 'click') {
-                exercise.currentStep = 'fill';
-                if (window.clearHints) window.clearHints();
-                if (hintsEnabled && window.renderHints) {
-                    window.renderHints(exercise.hints.filter(h => h.step === 'fill'));
-                }
-            }
-        }
-        
-        if (editVariantModal && !editVariantModal.classList.contains('hidden')) {
-            const exercise = getCurrentExercise();
-            if (exercise && exercise.id === 5 && exercise.currentStep === 'edit') {
-                exercise.currentStep = 'fill';
-                if (window.clearHints) window.clearHints();
-                if (hintsEnabled && window.renderHints) {
-                    setTimeout(() => window.renderHints(exercise.hints.filter(h => h.step === 'fill')), 100);
-                }
-            }
-        }
-        
-        // Detect when edit variant modal closes
-        if (editVariantModal && editVariantModal.classList.contains('hidden')) {
-            const exercise = getCurrentExercise();
-            if (exercise && exercise.id === 5 && exercise.currentStep === 'fill') {
-                // Modal closed, clear fill hints
-                if (window.clearHints) window.clearHints();
-            }
+        // When any class changes (potentially showing/hiding modals), re-check context
+        const exercise = getCurrentExercise();
+        if (exercise) {
+            checkContext(exercise);
         }
     });
-    
+
     observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
 }
 
 // ==================== INITIALIZATION ====================
 function initExerciseEngine() {
     updateExerciseUI();
-    
+
     const exerciseHeader = document.querySelector('.exercise-header');
     if (exerciseHeader) {
         const controlsDiv = document.createElement('div');
         controlsDiv.style.cssText = 'display: flex; gap: 12px; align-items: center; margin-top: 12px;';
-        
+
         const hintsToggle = document.createElement('button');
         hintsToggle.id = 'hints-toggle';
         hintsToggle.className = 'btn btn-sm btn-secondary';
         hintsToggle.style.cssText = 'flex: 1;';
-        hintsToggle.innerHTML = hintsEnabled 
-            ? '<i class="fas fa-lightbulb"></i> Hints ON' 
+        hintsToggle.innerHTML = hintsEnabled
+            ? '<i class="fas fa-lightbulb"></i> Hints ON'
             : '<i class="far fa-lightbulb"></i> Hints OFF';
         hintsToggle.addEventListener('click', toggleHints);
-        
-     const restartBtn = document.createElement('button');
-restartBtn.id = 'restart-exercises';
-restartBtn.className = 'btn btn-sm btn-secondary';
-restartBtn.style.cssText = 'flex: 1;';
-restartBtn.innerHTML = '<i class="fas fa-redo"></i> Restart';
-restartBtn.addEventListener('click', () => {
-  if (currentExercise > 0) {
-    restartExercise();  // Restart current exercise
-  } else {
-    restartAll();       // Restart all exercises (if on overview screen)
-  }
-});
 
-        
+        const restartBtn = document.createElement('button');
+        restartBtn.id = 'restart-exercises';
+        restartBtn.className = 'btn btn-sm btn-secondary';
+        restartBtn.style.cssText = 'flex: 1;';
+        restartBtn.innerHTML = '<i class="fas fa-redo"></i> Restart';
+        restartBtn.addEventListener('click', () => {
+            if (currentExercise > 0) {
+                restartExercise();  // Restart current exercise
+            } else {
+                restartAll();       // Restart all exercises (if on overview screen)
+            }
+        });
+
+
         const simulationsBtn = document.createElement('button');
         simulationsBtn.id = 'simulations-btn';
         simulationsBtn.className = 'btn btn-sm btn-primary';
@@ -664,13 +708,13 @@ restartBtn.addEventListener('click', () => {
                 window.showToast('AI Simulations coming soon!');
             }
         });
-        
+
         controlsDiv.appendChild(hintsToggle);
         controlsDiv.appendChild(restartBtn);
         controlsDiv.appendChild(simulationsBtn);
         exerciseHeader.appendChild(controlsDiv);
     }
-    
+
     if (hintsEnabled && window.renderHints) {
         const exercise = getCurrentExercise();
         if (exercise) {
@@ -680,7 +724,7 @@ restartBtn.addEventListener('click', () => {
             }, 500);
         }
     }
-    
+
     observeModals();
     setInterval(checkExerciseCompletion, 1000);
 }

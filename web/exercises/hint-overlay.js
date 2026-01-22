@@ -23,20 +23,20 @@ let activeHints = [];
  */
 function renderHints(hints) {
     clearHints();
-    
+
     if (!hints || hints.length === 0) return;
-    
+
     hints.forEach((hint, index) => {
         setTimeout(() => {
             const targets = document.querySelectorAll(hint.target);
             if (!targets || targets.length === 0) return;
-            
+
             const target = targets[0];
             const hintElement = createHintElement(hint.text, target);
             if (hintElement) {
                 document.body.appendChild(hintElement);
                 activeHints.push(hintElement);
-                
+
                 setTimeout(() => hintElement.classList.add('visible'), 10);
             }
         }, index * 150);
@@ -59,26 +59,45 @@ function createHintElement(text, targetElement) {
         </div>
         <div class="hint-arrow"></div>
     `;
-    
+
     document.body.appendChild(hint);
-    
+
     const reposition = () => {
         if (!document.body.contains(hint) || !document.body.contains(targetElement)) {
             return;
         }
         positionHint(hint, targetElement);
     };
-    
+
     reposition();
-    
+
     window.addEventListener('scroll', reposition, true);
     window.addEventListener('resize', reposition);
-    
+
+    // Auto-fade after 3 seconds
+    hint._fadeTimeout = setTimeout(() => {
+        hint.style.transition = 'opacity 0.5s ease';
+        hint.style.opacity = '0.3';
+    }, 3000);
+
+    // Restore opacity on hover
+    hint.addEventListener('mouseenter', () => {
+        clearTimeout(hint._fadeTimeout);
+        hint.style.opacity = '1';
+    });
+
+    hint.addEventListener('mouseleave', () => {
+        hint._fadeTimeout = setTimeout(() => {
+            hint.style.opacity = '0.3';
+        }, 3000); // Reset full 3s timer
+    });
+
     hint._cleanup = () => {
         window.removeEventListener('scroll', reposition, true);
         window.removeEventListener('resize', reposition);
+        if (hint._fadeTimeout) clearTimeout(hint._fadeTimeout);
     };
-    
+
     return hint;
 }
 
@@ -90,15 +109,15 @@ function createHintElement(text, targetElement) {
  */
 function positionHint(hint, target) {
     if (!document.body.contains(target)) return;
-    
+
     const rect = target.getBoundingClientRect();
     const hintRect = hint.getBoundingClientRect();
     const gap = 8;
-    
+
     // Calculate position above target (preferred)
     let top = rect.top + window.scrollY - hintRect.height - gap;
     let left = rect.left + window.scrollX + (rect.width / 2) - (hintRect.width / 2);
-    
+
     // Fall back to below if not enough space above
     if (rect.top - hintRect.height - gap < 10) {
         top = rect.bottom + window.scrollY + gap;
@@ -106,11 +125,11 @@ function positionHint(hint, target) {
     } else {
         hint.classList.remove('below');
     }
-    
+
     // Adjust left/right if hint extends beyond viewport
     const minLeft = window.scrollX + 10;
     const maxLeft = window.innerWidth + window.scrollX - hintRect.width - 10;
-    
+
     if (left < minLeft) {
         left = minLeft;
         const arrowOffset = (rect.left + window.scrollX + rect.width / 2) - left;
@@ -134,7 +153,7 @@ function positionHint(hint, target) {
             arrow.style.transform = 'translateX(-50%)';
         }
     }
-    
+
     hint.style.position = 'absolute';
     hint.style.top = top + 'px';
     hint.style.left = left + 'px';
