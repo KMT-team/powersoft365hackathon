@@ -1,26 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Login / Register</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script>
-  (function () {
-    const stored = localStorage.getItem("theme");
-    const systemLight = window.matchMedia("(prefers-color-scheme: light)").matches;
-    const theme = stored ?? (systemLight ? "light" : "dark");
-    document.documentElement.setAttribute("data-theme", theme);
-  })();
-</script>
+    (function () {
+      const stored = localStorage.getItem("theme");
+      const systemLight = window.matchMedia("(prefers-color-scheme: light)").matches;
+      const theme = stored ?? (systemLight ? "light" : "dark");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
   <script src="login.js" defer></script>
 </head>
+
 <body>
-   <div class="auth-box" data-mode="login">
+  <div class="auth-box" data-mode="login">
     <!-- Theme Toggle -->
     <button id="theme-toggle" aria-label="Toggle theme">
       <i class="fa-solid fa-sun"></i>
@@ -47,13 +49,7 @@
       <div>
         <label>Password</label><br>
         <div class="password-field">
-          <input
-            type="password"
-            name="password"
-            id="password-input"
-            autocomplete="current-password"
-            required
-          >
+          <input type="password" name="password" id="password-input" autocomplete="current-password" required>
           <button type="button" class="toggle-password" aria-label="Show password">
             <i class="fa-regular fa-eye-slash"></i>
           </button>
@@ -69,13 +65,8 @@
         <div>
           <label>Confirm password</label><br>
           <div class="password-field">
-            <input
-              type="password"
-              name="confirmPassword"
-              id="confirm-password-input"
-              autocomplete="new-password"
-              required
-            >
+            <input type="password" name="confirmPassword" id="confirm-password-input" autocomplete="new-password"
+              required>
             <button type="button" class="toggle-password" aria-label="Show password">
               <i class="fa-regular fa-eye-slash"></i>
             </button>
@@ -105,21 +96,22 @@
 
     <!-- Social login -->
     <div class="social-login">
-  <p>Or continue with</p>
+      <p>Or continue with</p>
 
-  <div class="social-icons">
-    <button type="button" class="icon-btn" aria-label="Continue with Google">
-      <i class="fa-brands fa-google"></i>
-    </button>
+      <div class="social-icons">
+        <button type="button" class="icon-btn" aria-label="Continue with Google">
+          <i class="fa-brands fa-google"></i>
+        </button>
 
-    <button type="button" class="icon-btn" aria-label="Continue with Facebook">
-      <i class="fa-brands fa-facebook"></i>
-    </button>
+        <button type="button" class="icon-btn" aria-label="Continue with Facebook">
+          <i class="fa-brands fa-facebook"></i>
+        </button>
 
-    <button type="button" class="icon-btn" aria-label="Continue with Instagram">
-      <i class="fa-brands fa-instagram"></i>
-    </button>
-  </div>
-</div>
+        <button type="button" class="icon-btn" aria-label="Continue with Instagram">
+          <i class="fa-brands fa-instagram"></i>
+        </button>
+      </div>
+    </div>
 </body>
+
 </html>

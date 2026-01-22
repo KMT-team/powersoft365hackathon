@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -19,6 +20,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
+
 <body class="landing">
 
   <!-- NAV -->
@@ -29,8 +31,7 @@
     </div>
     <nav class="nav-links">
       <a href="#how-it-works">How it works</a>
-      <a href="#preview">Preview</a>
-      <a href="#who-its-for">Who it's for</a>
+      <a href="#who-its-for">Who it’s for</a>
     </nav>
     <div class="nav-right">
       <button id="theme-toggle" aria-label="Toggle theme">
@@ -46,14 +47,14 @@
       <div class="hero-text">
         <h1>Simple. Powerful. Effective.</h1>
         <p class="hero-lead">Interactive simulations that help you understand how software really works.</p>
-        <a class="primary-btn" href="login.html">Start learning</a>
+        <a class="primary-btn" href="login.html">Get in the hub</a>
       </div>
       <div class="hero-flow">
         <img class="hero-ui" src="assets/psoft%20type%20ui%20-%20transp.png" alt="Psoft UI preview">
       </div>
     </section>
 
-    <section class="flow-section reveal-section">
+    <section id="how-it-works" class="flow-section reveal-section">
       <div class="section-header">
         <h2><i class="fa-solid fa-diagram-project"></i> How it works</h2>
       </div>
@@ -85,10 +86,13 @@
       </div>
     </section>
 
-    <section class="section who-its-for reveal-section">
+
+
+    <section id="who-its-for" class="section who-its-for reveal-section">
       <div class="who-content">
         <div class="who-image-col">
-          <img class="who-plain-image" src="assets/people%20flow%20ui%20-%20Edited.png" alt="People flow preview">
+          <img class="who-plain-image slide-in-left" src="assets/people%20flow%20ui%20-%20Edited.png"
+            alt="People flow preview">
         </div>
         <div class="who-right">
           <div class="section-header">
@@ -115,6 +119,24 @@
 
   </main>
 
+  <footer class="site-footer">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <img class="brand-mark-sm" src="assets/learnflowy-logo.svg" alt="Learnflowy">
+        <span>Learnflowy</span>
+      </div>
+      <div class="footer-links">
+      </div>
+      <button class="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+        <i class="fa-solid fa-arrow-up"></i>
+      </button>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Learnflowy. All rights reserved.</p>
+    </div>
+  </footer>
+
   <script src="flow.js"></script>
 </body>
+
 </html>

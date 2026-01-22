@@ -204,6 +204,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (hasError) return;
 
+    // Simulate session creation
+    const user = {
+      name: username || identifier.split('@')[0],
+      email: identifier,
+      onboarding: mode === 'register' // flag to show welcome tour if needed
+    };
+    localStorage.setItem('user', JSON.stringify(user));
+
     window.location.href = "dashboard.html";
   });
 
