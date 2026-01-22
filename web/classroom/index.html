@@ -59,12 +59,35 @@
             <!-- HORIZONTAL DIVIDER -->
             <div class="resizable-divider horizontal"></div>
 
-            <!-- Bottom Section: Exercise & Instructions -->
-            <div class="exercise-section">
-                <div class="exercise-header">
+            <!-- Bottom Section: Tutor Chat -->
+            <div id="tutor-pane" class="tutor-section-bottom">
+                <div class="tutor-header">
+                    <div>
+                        <h2>ModaPro Tutor</h2>
+                        <p>AI-powered guidance</p>
+                    </div>
+                    <select id="tutor-instructor-mode" class="compact-select">
+                        <option value="soft">Soft (Buddy)</option>
+                        <option value="intermediate">Intermediate (Consultant)</option>
+                        <option value="realistic">Realistic (Manager)</option>
+                    </select>
                 </div>
-                <div class="exercise-content">
-                    <!-- Dynamic content will be loaded here -->
+
+                <!-- Chat History (Scrollable) -->
+                <div id="tutor-chat-history" class="tutor-chat-history">
+                    <div class="tutor-message tutor-system">
+                        <div class="tutor-bubble">
+                            Hello! I'm your ModaPro Tutor. How can I help you today?
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Input -->
+                <div class="tutor-input">
+                    <input type="text" id="tutor-user-input" placeholder="Ask me anything..." autocomplete="off" />
+                    <button id="tutor-send-btn" class="btn-send">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
                 </div>
             </div>
         </div>
@@ -72,38 +95,12 @@
         <!-- VERTICAL DIVIDER -->
         <div id="classroom-divider" class="resizable-divider vertical"></div>
 
-        <!-- RIGHT SIDE: Tutor Chat (30%) -->
-        <div id="tutor-pane">
-            <div class="tutor-header">
-                <h2>ModaPro Tutor</h2>
-                <p>AI-powered guidance</p>
+        <!-- RIGHT SIDE: Exercise Instructions (30%) -->
+        <div id="exercise-pane">
+            <div class="exercise-header">
             </div>
-
-            <!-- Mode Selector -->
-            <div class="tutor-mode">
-                <label>Learning Mode:</label>
-                <select id="tutor-instructor-mode">
-                    <option value="soft">Soft (Onboarding Buddy)</option>
-                    <option value="intermediate">Intermediate (Consultant)</option>
-                    <option value="realistic">Realistic (Manager)</option>
-                </select>
-            </div>
-
-            <!-- Chat History (Scrollable) -->
-            <div id="tutor-chat-history" class="tutor-chat-history">
-                <div class="tutor-message tutor-system">
-                    <div class="tutor-bubble">
-                        Hello! I'm your ModaPro Tutor. How can I help you today?
-                    </div>
-                </div>
-            </div>
-
-            <!-- Chat Input -->
-            <div class="tutor-input">
-                <input type="text" id="tutor-user-input" placeholder="Ask me anything..." autocomplete="off" />
-                <button id="tutor-send-btn" class="btn-send">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
+            <div class="exercise-content">
+                <!-- Dynamic content will be loaded here -->
             </div>
         </div>
     </div>

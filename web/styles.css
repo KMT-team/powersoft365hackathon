@@ -1084,14 +1084,27 @@ body.classroom {
   background: var(--accent);
 }
 
-#tutor-pane {
+/* NEW: Right Sidebar for Exercises */
+#exercise-pane {
   width: 450px;
-  min-width: 380px;
-  max-width: 600px;
+  min-width: 350px;
+  max-width: 700px;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border-left: 1px solid var(--card-border);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* NEW: Bottom-Left Pane for Tutor */
+#tutor-pane {
+  flex: 1;
   display: flex;
   flex-direction: column;
   background: var(--bg);
-  overflow: hidden;
+  border-top: 1px solid var(--card-border);
+  min-height: 0;
 }
 
 /* ========== INVENTORY SECTION ========== */
@@ -1352,63 +1365,52 @@ body.classroom {
 
 /* ========== TUTOR PANE ========== */
 .tutor-header {
-  padding: 24px;
+  padding: 16px 24px;
   background: var(--surface);
   border-bottom: 1px solid var(--card-border);
-  text-align: center;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
 }
 
 .tutor-header h2 {
-  margin: 0 0 6px 0;
-  font-size: 22px;
+  margin: 0 0 4px 0;
+  font-size: 20px;
   font-weight: 800;
   letter-spacing: -0.2px;
   color: var(--text);
+  text-align: left;
 }
 
 .tutor-header p {
   margin: 0;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--accent);
+  text-align: left;
 }
 
-.tutor-mode {
-  padding: 20px 24px;
-  border-bottom: 1px solid var(--card-border);
-  background: var(--surface);
-}
-
-.tutor-mode label {
-  display: block;
-  font-size: 13px;
-  font-weight: 800;
-  color: var(--text);
-  margin-bottom: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-}
-
-.tutor-mode select {
-  width: 100%;
-  padding: 12px 14px;
+.compact-select {
+  padding: 8px 12px;
   border: 1px solid var(--control-border);
-  border-radius: 12px;
+  border-radius: 10px;
   background: var(--input-surface);
   color: var(--text);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   font-family: inherit;
   cursor: pointer;
   transition: border-color 0.2s ease;
+  max-width: 200px;
 }
 
-.tutor-mode select:hover {
+.compact-select:hover {
   border-color: var(--input-border-hover);
 }
 
-.tutor-mode select:focus {
+.compact-select:focus {
   outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 1px var(--ring);
@@ -1999,41 +2001,48 @@ body.classroom {
   border-bottom: 1px solid inherit;
   border-top: none;
   border-left: none;
-}.sim-deactivated { opacity: 0.5; pointer-events: none; filter: grayscale(100%); transition: all 0.3s ease; }
+}
+
+.sim-deactivated {
+  opacity: 0.5;
+  pointer-events: none;
+  filter: grayscale(100%);
+  transition: all 0.3s ease;
+}
 
 /* ========== EXERCISE SELECTION MODAL ========== */
 .modal-content.large-modal {
-    width: 80%;
-    height: 80%;
-    max-width: 1100px;
-    max-height: 90vh;
-    display: flex;
-    flex-direction: column;
+  width: 80%;
+  height: 80%;
+  max-width: 1100px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .exercise-selection-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
-    padding: 24px;
-    overflow-y: auto;
-    flex: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
 }
 
 .exercise-selection-grid .exercise-list-item {
-    padding: 24px;
-    border: 1px solid var(--card-border);
-    background: var(--input-surface);
-    border-radius: 16px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    transition: all 0.2s ease;
-    margin: 0;
+  padding: 24px;
+  border: 1px solid var(--card-border);
+  background: var(--input-surface);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.2s ease;
+  margin: 0;
 }
 
 .exercise-selection-grid .exercise-list-item:hover {
-    transform: translateY(-4px);
-    border-color: var(--accent);
-    box-shadow: 0 8px 24px rgba(0, 180, 216, 0.1);
+  transform: translateY(-4px);
+  border-color: var(--accent);
+  box-shadow: 0 8px 24px rgba(0, 180, 216, 0.1);
 }

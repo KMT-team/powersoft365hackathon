@@ -73,7 +73,7 @@ function findProduct(id) {
 function persistState() {
     saveToStorage(STORAGE_KEY_INVENTORY, inventory);
     saveToStorage(STORAGE_KEY_LOGS, logs);
-    
+
     // Notify exercise engine of log update
     if (window.addExerciseLog && logs.length > 0) {
         window.addExerciseLog(logs[0]);
@@ -262,7 +262,7 @@ function createProductCard(product) {
     }).join('');
 
     const cardClass = product.editable === false ? 'sim-card default-item' : 'sim-card';
-    const actionButtons = product.editable === false 
+    const actionButtons = product.editable === false
         ? '<span class="badge default">DEFAULT</span>'
         : `
             <button class="btn btn-sm btn-secondary edit-btn" data-id="${product.id}">Edit</button>
@@ -399,15 +399,15 @@ async function sendMessage() {
     if (!elements.userInput || isWaitingForResponse) return;
     const text = elements.userInput.value.trim();
     if (!text) return;
-    
+
     addMessage(text, 'user');
     elements.userInput.value = '';
     elements.userInput.disabled = true;
     elements.sendBtn.disabled = true;
     isWaitingForResponse = true;
-    
+
     const mode = elements.modeSelector ? elements.modeSelector.value : 'soft';
-    
+
     try {
         const response = await fetch('/api/chat', {
             method: 'POST',
@@ -419,11 +419,11 @@ async function sendMessage() {
                 session_id: 'classroom-session'
             })
         });
-        
+
         if (!response.ok) {
             throw new Error('Chat service unavailable');
         }
-        
+
         const data = await response.json();
         addMessage(data.response || 'No response', 'bot');
     } catch (err) {
@@ -441,7 +441,7 @@ async function sendMessage() {
 document.addEventListener('DOMContentLoaded', () => {
     renderInventory();
     renderLogs();
-    
+
     // Initialize exercise engine
     if (window.initExerciseEngine) {
         window.initExerciseEngine();
@@ -647,26 +647,31 @@ function initResizableDividers() {
     const verticalDivider = document.getElementById('classroom-divider');
     const horizontalDivider = document.querySelector('.resizable-divider.horizontal');
     const simulatorPane = document.getElementById('simulator-pane');
-    const tutorPane = document.getElementById('tutor-pane');
-    const inventorySection = document.querySelector('.inventory-section');
-    const exerciseSection = document.querySelector('.exercise-section');
 
-    if (verticalDivider && simulatorPane && tutorPane) {
+    // Updated IDs for new layout
+    const exercisePane = document.getElementById('exercise-pane'); // Right Side
+    const tutorPane = document.getElementById('tutor-pane');       // Bottom Left
+    const inventorySection = document.querySelector('.inventory-section'); // Top Left
+
+    // Vertical Divider: Resizes Exercise Pane (Right Sidebar)
+    if (verticalDivider && exercisePane) {
         let isResizing = false;
         verticalDivider.addEventListener('mousedown', () => { isResizing = true; });
         document.addEventListener('mouseup', () => { isResizing = false; });
         document.addEventListener('mousemove', (e) => {
             if (!isResizing) return;
             const containerWidth = window.innerWidth;
-            const newTutorWidth = containerWidth - e.clientX - 4;
-            
-            if (newTutorWidth >= 380 && newTutorWidth <= 600) {
-                tutorPane.style.width = newTutorWidth + 'px';
+            // Calculate width from the right side
+            const newExerciseWidth = containerWidth - e.clientX - 4;
+
+            if (newExerciseWidth >= 350 && newExerciseWidth <= 700) {
+                exercisePane.style.width = newExerciseWidth + 'px';
             }
         });
     }
 
-    if (horizontalDivider && inventorySection && exerciseSection && simulatorPane) {
+    // Horizontal Divider: Resizes Tutor Pane (Bottom Left) vs Inventory (Top Left)
+    if (horizontalDivider && inventorySection && tutorPane && simulatorPane) {
         let isResizing = false;
         horizontalDivider.addEventListener('mousedown', (e) => {
             e.preventDefault();
@@ -680,12 +685,11 @@ function initResizableDividers() {
             const newInvHeight = e.clientY - rect.top;
             const totalHeight = rect.height;
             const percentage = (newInvHeight / totalHeight) * 100;
-            const minExerciseHeight = (113 / totalHeight) * 100;
-            const maxInvPercentage = 100 - minExerciseHeight;
-            if (percentage > 20 && percentage < maxInvPercentage) {
+
+            // Limit resizing between 20% and 80%
+            if (percentage > 20 && percentage < 80) {
                 inventorySection.style.flex = `1 1 ${percentage}%`;
-                exerciseSection.style.flex = `1 1 ${100 - percentage}%`;
-                exerciseSection.style.maxHeight = 'none';
+                tutorPane.style.flex = `1 1 ${100 - percentage}%`;
             }
         });
     }
