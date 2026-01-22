@@ -1,4 +1,16 @@
+/**
+ * login.js - Authentication UI Controller
+ * 
+ * Handles:
+ * 1. Login/Register toggle with form switching
+ * 2. API calls to /api/login, /api/register, /api/guest
+ * 3. Theme persistence (light/dark mode)
+ * 4. Form validation and error display
+ * 5. Password visibility toggle
+ */
+
 document.addEventListener("DOMContentLoaded", () => {
+  // ==================== DOM ELEMENTS ====================
   const authBox = document.querySelector(".auth-box");
   const form = document.querySelector("form");
   const toggleText = document.getElementById("toggle-text");
@@ -11,6 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const registerUsername = document.querySelector('input[name="username"]');
   const confirmPassword = document.getElementById("confirm-password-input");
 
+  // ==================== THEME TOGGLE ====================
   const themeToggle = document.getElementById("theme-toggle");
   const themeIcon = themeToggle.querySelector("i");
   const systemTheme = window.matchMedia("(prefers-color-scheme: light)");
@@ -18,6 +31,11 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.getItem("theme") === "light" ||
     localStorage.getItem("theme") === "dark";
 
+  // ==================== COPY CONFIG ====================
+  /**
+   * Text and labels for login vs register modes
+   * Switched dynamically when user toggles between modes
+   */
   const modeCopy = {
     login: {
       emailLabel: "Email or username",
@@ -37,6 +55,9 @@ document.addEventListener("DOMContentLoaded", () => {
     },
   };
 
+  /**
+   * Update theme icon (sun/moon) based on current theme
+   */
   function updateThemeIcon() {
     const isLight =
       document.documentElement.getAttribute("data-theme") === "light";
@@ -117,9 +138,12 @@ document.addEventListener("DOMContentLoaded", () => {
   guestLink.addEventListener("click", async (e) => {
     e.preventDefault();
 
-    // Clear all classroom data for guest users
+    // Clear all classroom and exercise data for guest users
     localStorage.removeItem('sim_inventory_v1');
     localStorage.removeItem('sim_inventory_logs_v1');
+    localStorage.removeItem('exercise_progress_v1');
+    localStorage.removeItem('exercise_completions_v1');
+    localStorage.removeItem('exercise_hints_enabled_v1');
 
     try {
       const res = await fetch("/api/guest", {

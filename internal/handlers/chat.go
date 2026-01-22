@@ -157,7 +157,6 @@ func (h *ChatHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 			}
 		}
 	}
-
 	// Prepare and send the JSON response.
 	resp := struct {
 		Response string `json:"response"`
@@ -167,19 +166,23 @@ func (h *ChatHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(w).Encode(resp)
 }
 
-// Enhance AI coach for dynamic scenarios and feedback
-func (h *ChatHandler) GenerateScenario(userID string, level int) (Scenario, error) {
-	// Placeholder logic for dynamic scenario generation
-	return Scenario{
-		ID:    level,
-		Title: fmt.Sprintf("Level %d - Dynamic Task", level),
-		Steps: []string{"Step 1", "Step 2", "Step 3"},
-		Hints: []string{"Hint 1", "Hint 2", "Hint 3"},
-	}, nil
+// ================== UNUSED FUNCTIONS (MVP v1) ==================
+// These functions are not used in the current MVP and are kept for future enhancements
+
+// GenerateScenario generates dynamic scenarios - placeholder for future AI adaptation
+// TODO: Implement when dynamic scenario generation is added
+func (h *ChatHandler) GenerateScenario(userID string, level int) map[string]interface{} {
+	return map[string]interface{}{
+		"id":    level,
+		"title": fmt.Sprintf("Level %d - Dynamic Task", level),
+		"steps": []string{"Step 1", "Step 2", "Step 3"},
+		"hints": []string{"Hint 1", "Hint 2", "Hint 3"},
+	}
 }
 
+// ProvideFeedback generates feedback based on user performance - placeholder for future
+// TODO: Implement when AI-powered feedback is needed
 func (h *ChatHandler) ProvideFeedback(userID string, performance map[string]interface{}) string {
-	// Placeholder logic for feedback generation
 	mistakes := performance["mistakes"].(int)
 	timeTaken := performance["timeTaken"].(int)
 
@@ -189,8 +192,9 @@ func (h *ChatHandler) ProvideFeedback(userID string, performance map[string]inte
 	return fmt.Sprintf("You completed the task in %d seconds with %d mistakes. Review the steps carefully.", timeTaken, mistakes)
 }
 
+// AdaptToPerformance adapts hints based on user mistakes - placeholder for future
+// TODO: Implement when adaptive tutoring is needed
 func (h *ChatHandler) AdaptToPerformance(userID string, performance map[string]interface{}) string {
-	// Placeholder logic for adapting to user performance
 	mistakes := performance["mistakes"].(int)
 
 	if mistakes > 3 {

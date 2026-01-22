@@ -1,3 +1,12 @@
+/**
+ * flow.js - Landing Page Theme Toggle & Scroll Animations
+ * 
+ * Manages:
+ * 1. Theme persistence (light/dark mode) with system preference fallback
+ * 2. Scroll-triggered reveal animations using Intersection Observer
+ */
+
+// Initialize theme immediately before page render to prevent flash
 (function () {
   const stored = localStorage.getItem("theme");
   const systemLight = window.matchMedia("(prefers-color-scheme: light)").matches;
@@ -13,6 +22,9 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.getItem("theme") === "light" ||
     localStorage.getItem("theme") === "dark";
 
+  /**
+   * Update theme toggle icon based on current theme
+   */
   function updateThemeIcon() {
     const isLight = document.documentElement.getAttribute("data-theme") === "light";
     if (isLight) {
@@ -24,6 +36,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  /**
+   * Apply theme by setting data-theme attribute
+   * @param {string} theme - "light" or "dark"
+   */
   function applyTheme(theme) {
     if (theme === "light") {
       document.documentElement.setAttribute("data-theme", "light");
@@ -33,6 +49,9 @@ document.addEventListener("DOMContentLoaded", () => {
     updateThemeIcon();
   }
 
+  /**
+   * Initialize theme from storage or system preference
+   */
   function initTheme() {
     const storedTheme = localStorage.getItem("theme");
     if (storedTheme === "light" || storedTheme === "dark") {
@@ -42,6 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
     applyTheme(systemTheme.matches ? "light" : "dark");
   }
 
+  // Toggle theme on button click
   if (themeToggle && themeIcon) {
     themeToggle.addEventListener("click", () => {
       const isLight = document.documentElement.getAttribute("data-theme") === "light";
@@ -52,6 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Respond to system theme changes if no manual override
   systemTheme.addEventListener("change", (event) => {
     if (hasManualTheme) return;
     applyTheme(event.matches ? "light" : "dark");
@@ -59,14 +80,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
   initTheme();
 
+  // ==================== SCROLL ANIMATIONS ====================
   const steps = document.querySelectorAll(".flow-step");
   const revealSections = document.querySelectorAll(".reveal-section");
+  
+  // Fallback for browsers without Intersection Observer
   if (!("IntersectionObserver" in window)) {
     steps.forEach((step) => step.classList.add("is-visible"));
     revealSections.forEach((section) => section.classList.add("is-visible"));
     return;
   }
 
+  /**
+   * Observer that adds 'is-visible' class when element scrolls into view
+   * Triggers fade-in and slide animations via CSS transitions
+   */
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {

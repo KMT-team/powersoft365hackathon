@@ -6,8 +6,13 @@ import (
 	"time"
 )
 
-// ServeClassroom handles requests to /classroom/
-// It enforces authentication before serving static files from web/classroom
+// ServeClassroom handles requests to /classroom/ with automatic guest session creation.
+//
+// Process:
+// 1. Check for existing session cookie
+// 2. If missing, auto-create "guest@system.local" user and session
+// 3. Set session cookie (httpOnly, 24-hour expiry)
+// 4. Serve static files from web/classroom directory
 func ServeClassroom(w http.ResponseWriter, r *http.Request) {
 	// Ensure a guest session exists for anonymous visitors, then serve static files.
 	// 1. Check for valid session cookie

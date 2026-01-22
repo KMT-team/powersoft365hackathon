@@ -80,19 +80,6 @@ func main() {
 	// (Unified) AI Chat Endpoint
 	http.Handle("/api/chat", chatHandler)
 
-	// Scenario and Progress API routes
-	http.HandleFunc("/api/scenario/next", handlers.GetNextScenario)
-	http.HandleFunc("/api/scenario/", func(w http.ResponseWriter, r *http.Request) {
-		if strings.HasSuffix(r.URL.Path, "/action") {
-			handlers.PostScenarioAction(w, r)
-		} else if strings.HasSuffix(r.URL.Path, "/finish") {
-			handlers.PostScenarioFinish(w, r)
-		} else {
-			http.NotFound(w, r)
-		}
-	})
-	http.HandleFunc("/api/progress", handlers.GetUserProgress)
-
 	log.Println("Server running on http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

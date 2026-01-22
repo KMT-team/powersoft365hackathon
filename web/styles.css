@@ -953,7 +953,7 @@ body.classroom {
 }
 
 #simulator-pane {
-  width: 70%;
+  flex: 1;
   display: flex;
   flex-direction: column;
   background: var(--bg);
@@ -973,7 +973,9 @@ body.classroom {
 }
 
 #tutor-pane {
-  width: 30%;
+  width: 600px;
+  min-width: 380px;
+  max-width: 600px;
   display: flex;
   flex-direction: column;
   background: var(--bg);
@@ -982,7 +984,7 @@ body.classroom {
 
 /* ========== INVENTORY SECTION ========== */
 .inventory-section {
-  flex: 1;
+  flex: 2;
   display: flex;
   flex-direction: column;
   padding: 28px;
@@ -1015,8 +1017,9 @@ body.classroom {
 
 .inventory-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(360px, 360px));
   gap: 20px;
+  align-items: start;
 }
 
 .sim-card {
@@ -1102,9 +1105,9 @@ body.classroom {
 }
 
 .variant-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
   gap: 8px;
   padding: 12px;
   background: var(--input-surface);
@@ -1116,23 +1119,43 @@ body.classroom {
 .variant-info {
   font-weight: 700;
   color: var(--text);
-  flex: 1;
+  grid-column: 1;
+  grid-row: 1;
 }
 
 .variant-stock {
   font-size: 13px;
   font-weight: 700;
   color: var(--accent);
-  min-width: 70px;
+  grid-column: 2;
+  grid-row: 1;
+  text-align: right;
 }
 
 .variant-stock.out {
   color: var(--danger);
 }
 
+.variant-actions {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.variant-actions-row {
+  display: flex;
+  gap: 8px;
+}
+
+.variant-actions-row .btn {
+  flex: 1;
+}
+
 /* ========== EXERCISE SECTION ========== */
 .exercise-section {
-  flex: 1 1 25%;
+  flex: 1;
   display: flex;
   flex-direction: column;
   background: var(--surface);
@@ -1656,6 +1679,115 @@ body.classroom {
   color: var(--accent);
 }
 
+/* ========== HINT OVERLAYS ========== */
+.hint-overlay {
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.hint-overlay.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.hint-overlay.below {
+  transform: translateY(8px);
+}
+
+.hint-overlay.below.visible {
+  transform: translateY(0);
+}
+
+.hint-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--accent);
+  color: var(--accent-contrast);
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: 0 4px 16px rgba(0, 180, 216, 0.4);
+  border: 1px solid color-mix(in srgb, var(--accent) 80%, transparent);
+  max-width: 250px;
+  word-wrap: break-word;
+  white-space: normal;
+  line-height: 1.4;
+}
+
+.hint-content i {
+  font-size: 14px;
+  color: var(--accent-text);
+}
+
+.hint-arrow {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid var(--accent);
+  bottom: -6px;
+}
+
+.hint-overlay.below .hint-arrow {
+  bottom: auto;
+  top: -6px;
+  border-top: none;
+  border-bottom: 6px solid var(--accent);
+}
+
+#hints-toggle.active {
+  background: color-mix(in srgb, var(--accent) 15%, var(--input-surface));
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.exercise-list-item {
+  padding: 16px;
+  margin: 12px 0;
+  background: var(--input-surface);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.exercise-list-item:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.exercise-list-item h4 {
+  margin: 0 0 8px 0;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.exercise-list-item p {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.exercise-list-item .btn {
+  width: 100%;
+}
+
+.variant-row.error {
+  border-color: #FFEB3B;
+  background: color-mix(in srgb, #FFEB3B 15%, var(--input-surface));
+  box-shadow: 0 0 8px rgba(255, 235, 59, 0.3);
+}
+
 /* Scrollbar Styling */
 ::-webkit-scrollbar {
   width: 8px;
@@ -1673,4 +1805,85 @@ body.classroom {
 
 ::-webkit-scrollbar-thumb:hover {
   background: color-mix(in srgb, var(--muted) 60%, transparent);
+}
+/* ========== HINTS (EXERCISE SYSTEM) ========== */
+.hint-overlay {
+    position: fixed;
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--control-border));
+    border-radius: 12px;
+    padding: 12px 14px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    z-index: 10000;
+    max-width: 220px;
+    width: max-content;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(-8px) scale(0.95);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    white-space: normal;
+    word-wrap: break-word;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.4;
+}
+
+.hint-overlay.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.hint-overlay.below {
+    transform: translateY(0) scale(1);
+}
+
+.hint-overlay.below.visible {
+    transform: translateY(0) scale(1);
+}
+
+.hint-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    line-height: 1.4;
+}
+
+.hint-content i {
+    color: var(--accent);
+    font-size: 14px;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.hint-content span {
+    flex: 1;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+.hint-arrow {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: inherit;
+    border: inherit;
+    border-right: none;
+    border-bottom: none;
+    border-radius: 2px;
+    top: -4px;
+    left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+    box-shadow: -2px -2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.hint-overlay.below .hint-arrow {
+    top: auto;
+    bottom: -4px;
+    border-right: 1px solid inherit;
+    border-bottom: 1px solid inherit;
+    border-top: none;
+    border-left: none;
 }

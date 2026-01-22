@@ -1,11 +1,17 @@
 /**
- * classroom.js - Middleware for ModaPro Classroom
+ * classroom.js - ModaPro Inventory Simulation Controller
+ * 
+ * Manages inventory CRUD operations, localStorage persistence, transaction logging,
+ * and UI rendering for the classroom simulator. Supports both guest (localStorage only)
+ * and authenticated users (localStorage + backend sync).
  */
 
 // ==================== STORAGE & DATA ====================
+// LocalStorage keys for persistent inventory and transaction data
 const STORAGE_KEY_INVENTORY = 'sim_inventory_v1';
 const STORAGE_KEY_LOGS = 'sim_inventory_logs_v1';
 
+// Initial inventory state for new users/guests
 const INITIAL_INVENTORY = [{
     id: 1705650123456,
     name: 'Oxford Shirt',
@@ -19,6 +25,12 @@ const INITIAL_INVENTORY = [{
     ]
 }];
 
+/**
+ * Load data from browser localStorage with fallback to default value
+ * @param {string} key - Storage key
+ * @param {*} defaultVal - Default value if key not found or parse fails
+ * @returns {*} Parsed data or default value
+ */
 function loadFromStorage(key, defaultVal) {
     try {
         const raw = localStorage.getItem(key);
@@ -28,6 +40,11 @@ function loadFromStorage(key, defaultVal) {
     }
 }
 
+/**
+ * Save data to browser localStorage with error handling
+ * @param {string} key - Storage key
+ * @param {*} data - Data to serialize and save
+ */
 function saveToStorage(key, data) {
     try {
         localStorage.setItem(key, JSON.stringify(data));
@@ -36,19 +53,37 @@ function saveToStorage(key, data) {
     }
 }
 
+// Initialize inventory and logs from localStorage
 let inventory = loadFromStorage(STORAGE_KEY_INVENTORY, INITIAL_INVENTORY.slice());
 let logs = loadFromStorage(STORAGE_KEY_LOGS, []);
 
 // ==================== OPERATIONS ====================
+/**
+ * Find product by ID in inventory array
+ * @param {number} id - Product ID
+ * @returns {Object|undefined} Product object or undefined
+ */
 function findProduct(id) {
     return inventory.find(p => p.id === id);
 }
 
+/**
+ * Persist current inventory and logs to localStorage, trigger exercise log capture
+ */
 function persistState() {
     saveToStorage(STORAGE_KEY_INVENTORY, inventory);
     saveToStorage(STORAGE_KEY_LOGS, logs);
+    
+    // Notify exercise engine of log update
+    if (window.addExerciseLog && logs.length > 0) {
+        window.addExerciseLog(logs[0]);
+    }
 }
 
+/**
+ * Add new product to inventory
+ * @param {Object} product - Product object with name, category, price
+ */
 function addProduct(product) {
     product.id = Date.now();
     product.active = true;
@@ -59,6 +94,12 @@ function addProduct(product) {
     persistState();
 }
 
+/**
+ * Update existing product (name, category, price)
+ * @param {number} id - Product ID
+ * @param {Object} data - Updated fields
+ * @returns {boolean} Success status
+ */
 function updateProduct(id, data) {
     const idx = inventory.findIndex(p => p.id === id);
     if (idx === -1) return false;
@@ -69,6 +110,11 @@ function updateProduct(id, data) {
     return true;
 }
 
+/**
+ * Delete product from inventory (only if editable)
+ * @param {number} id - Product ID
+ * @returns {boolean} Success status
+ */
 function deleteProduct(id) {
     const product = findProduct(id);
     if (!product || product.editable === false) return false;
@@ -78,6 +124,12 @@ function deleteProduct(id) {
     return true;
 }
 
+/**
+ * Sell one unit of product variant, decrement stock
+ * @param {number} productId - Product ID
+ * @param {number} variantIndex - Index in product.variants array
+ * @returns {boolean} Success status
+ */
 function sellItem(productId, variantIndex) {
     const product = findProduct(productId);
     if (!product || !product.active || product.editable === false) return false;
@@ -89,6 +141,12 @@ function sellItem(productId, variantIndex) {
     return true;
 }
 
+/**
+ * Mark one unit as damaged, decrement stock
+ * @param {number} productId - Product ID
+ * @param {number} variantIndex - Index in product.variants array
+ * @returns {boolean} Success status
+ */
 function damageItem(productId, variantIndex) {
     const product = findProduct(productId);
     if (!product || !product.active || product.editable === false) return false;
@@ -100,6 +158,12 @@ function damageItem(productId, variantIndex) {
     return true;
 }
 
+/**
+ * Add color/size variant to product
+ * @param {number} productId - Product ID
+ * @param {Object} variant - Variant object with color, size, stock
+ * @returns {boolean} Success status
+ */
 function addVariant(productId, variant) {
     const product = findProduct(productId);
     if (!product || product.editable === false) return false;
@@ -109,6 +173,13 @@ function addVariant(productId, variant) {
     return true;
 }
 
+/**
+ * Update existing variant (color, size, stock)
+ * @param {number} productId - Product ID
+ * @param {number} variantIndex - Index in product.variants array
+ * @param {Object} data - Updated fields
+ * @returns {boolean} Success status
+ */
 function updateVariant(productId, variantIndex, data) {
     const product = findProduct(productId);
     if (!product || product.editable === false) return false;
@@ -119,11 +190,32 @@ function updateVariant(productId, variantIndex, data) {
     return true;
 }
 
+/**
+ * Delete variant from product
+ * @param {number} productId - Product ID
+ * @param {number} variantIndex - Index in product.variants array
+ * @returns {boolean} Success status
+ */
+function deleteVariant(productId, variantIndex) {
+    const product = findProduct(productId);
+    if (!product || product.editable === false) return false;
+    if (!product.variants[variantIndex]) return false;
+    product.variants.splice(variantIndex, 1);
+    logs.unshift(`${timestamp()} - Deleted variant from: ${product.name}`);
+    persistState();
+    return true;
+}
+
+/**
+ * Get current time as HH:MM:SS string for transaction logs
+ * @returns {string} Formatted time string
+ */
 function timestamp() {
     return new Date().toLocaleTimeString();
 }
 
 // ==================== UI ELEMENTS ====================
+// Cache DOM references for classroom UI
 const elements = {
     inventoryGrid: document.getElementById('sim-inventory-grid'),
     transactionLog: document.getElementById('sim-transaction-log'),
@@ -143,6 +235,11 @@ const elements = {
 };
 
 // ==================== RENDERING ====================
+/**
+ * Create HTML card element for a product with variants and action buttons
+ * @param {Object} product - Product object with variants array
+ * @returns {string} HTML string for product card
+ */
 function createProductCard(product) {
     const variantsHTML = product.variants.map((v, i) => {
         const isOut = v.stock <= 0;
@@ -151,9 +248,16 @@ function createProductCard(product) {
             <div class="variant-row">
                 <div class="variant-info">${v.color} / ${v.size}</div>
                 <div class="variant-stock ${isOut ? 'out' : ''}">${isOut ? 'Sold Out' : v.stock + ' left'}</div>
-                <button class="btn btn-sm btn-secondary sell-btn" data-id="${product.id}" data-variant="${i}" ${isOut || isDefault ? 'disabled' : ''}>Sell</button>
-                <button class="btn btn-sm btn-success damage-btn" data-id="${product.id}" data-variant="${i}" ${isOut || isDefault ? 'disabled' : ''}>Damage</button>
-                ${!isDefault ? `<button class="btn btn-sm btn-secondary edit-variant-btn" data-id="${product.id}" data-variant="${i}">Edit</button>` : ''}
+                <div class="variant-actions">
+                    <div class="variant-actions-row">
+                        <button class="btn btn-sm btn-secondary sell-btn" data-id="${product.id}" data-variant="${i}" ${isOut || isDefault ? 'disabled' : ''}>Sell</button>
+                        <button class="btn btn-sm btn-success damage-btn" data-id="${product.id}" data-variant="${i}" ${isOut || isDefault ? 'disabled' : ''}>Damage</button>
+                    </div>
+                    ${!isDefault ? `<div class="variant-actions-row">
+                        <button class="btn btn-sm btn-secondary edit-variant-btn" data-id="${product.id}" data-variant="${i}">Edit</button>
+                        <button class="btn btn-sm btn-success delete-variant-btn" data-id="${product.id}" data-variant="${i}">X</button>
+                    </div>` : ''}
+                </div>
             </div>`;
     }).join('');
 
@@ -182,6 +286,10 @@ function createProductCard(product) {
         </div>`;
 }
 
+/**
+ * Render inventory grid with all products and their variants
+ * Updates the DOM with product cards
+ */
 function renderInventory() {
     if (!elements.inventoryGrid) return;
     if (inventory.length === 0) {
@@ -191,6 +299,10 @@ function renderInventory() {
     elements.inventoryGrid.innerHTML = inventory.map(createProductCard).join('');
 }
 
+/**
+ * Render transaction log of recent operations
+ * Shows up to 50 most recent entries
+ */
 function renderLogs() {
     if (!elements.transactionLog) return;
     if (logs.length === 0) {
@@ -201,14 +313,27 @@ function renderLogs() {
 }
 
 // ==================== MODALS ====================
+/**
+ * Show modal dialog by removing 'hidden' class
+ * @param {Element} modal - Modal element
+ */
 function openModal(modal) {
     if (modal) modal.classList.remove('hidden');
 }
 
+/**
+ * Hide modal dialog by adding 'hidden' class
+ * @param {Element} modal - Modal element
+ */
 function closeModal(modal) {
     if (modal) modal.classList.add('hidden');
 }
 
+/**
+ * Display temporary toast notification
+ * @param {string} msg - Message text
+ * @param {boolean} success - True for success (green), false for error (red)
+ */
 function showToast(msg, success = true) {
     const t = document.createElement('div');
     t.className = `toast ${success ? 'toast-success' : 'toast-error'}`;
@@ -220,6 +345,16 @@ function showToast(msg, success = true) {
         setTimeout(() => t.remove(), 300);
     }, 2500);
 }
+
+// Expose showToast globally for exercise engine
+window.showToast = showToast;
+
+window.reloadInventory = () => {
+    inventory = loadFromStorage(STORAGE_KEY_INVENTORY, INITIAL_INVENTORY.slice());
+    logs = loadFromStorage(STORAGE_KEY_LOGS, []);
+    renderInventory();
+    renderLogs();
+};
 
 window.openVariantModal = (productId) => {
     const product = findProduct(productId);
@@ -274,6 +409,11 @@ function sendMessage() {
 document.addEventListener('DOMContentLoaded', () => {
     renderInventory();
     renderLogs();
+    
+    // Initialize exercise engine
+    if (window.initExerciseEngine) {
+        window.initExerciseEngine();
+    }
 
     if (elements.addBtn) {
         elements.addBtn.addEventListener('click', () => openModal(elements.addModal));
@@ -416,6 +556,21 @@ document.addEventListener('DOMContentLoaded', () => {
             window.openEditVariantModal(pid, vi);
         }
 
+        if (t.classList.contains('delete-variant-btn')) {
+            const pid = parseInt(t.dataset.id);
+            const vi = parseInt(t.dataset.variant);
+            if (confirm('Delete this variant permanently?')) {
+                const ok = deleteVariant(pid, vi);
+                if (ok) {
+                    renderInventory();
+                    renderLogs();
+                    showToast('Variant deleted');
+                } else {
+                    showToast('Unable to delete variant', false);
+                }
+            }
+        }
+
         if (t.classList.contains('edit-btn')) {
             const pid = parseInt(t.dataset.id);
             const product = findProduct(pid);
@@ -431,7 +586,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const pid = parseInt(t.dataset.id);
             const product = findProduct(pid);
             if (!product || product.editable === false) return;
-            if (confirm('Delete this product?')) {
+            if (confirm('Are you sure you want to delete this product permanently?')) {
                 deleteProduct(pid);
                 renderInventory();
                 renderLogs();
@@ -471,10 +626,10 @@ function initResizableDividers() {
         document.addEventListener('mousemove', (e) => {
             if (!isResizing) return;
             const containerWidth = window.innerWidth;
-            const newSimWidth = (e.clientX / containerWidth) * 100;
-            if (newSimWidth > 5 && newSimWidth < 95) {
-                simulatorPane.style.width = newSimWidth + '%';
-                tutorPane.style.width = (100 - newSimWidth) + '%';
+            const newTutorWidth = containerWidth - e.clientX - 4;
+            
+            if (newTutorWidth >= 380 && newTutorWidth <= 600) {
+                tutorPane.style.width = newTutorWidth + 'px';
             }
         });
     }
@@ -493,7 +648,9 @@ function initResizableDividers() {
             const newInvHeight = e.clientY - rect.top;
             const totalHeight = rect.height;
             const percentage = (newInvHeight / totalHeight) * 100;
-            if (percentage > 5 && percentage < 95) {
+            const minExerciseHeight = (113 / totalHeight) * 100;
+            const maxInvPercentage = 100 - minExerciseHeight;
+            if (percentage > 20 && percentage < maxInvPercentage) {
                 inventorySection.style.flex = `1 1 ${percentage}%`;
                 exerciseSection.style.flex = `1 1 ${100 - percentage}%`;
                 exerciseSection.style.maxHeight = 'none';
