@@ -61,3 +61,9 @@ func ServeHomepage(w http.ResponseWriter, r *http.Request) {
 		"email":   email,
 	})
 }
+
+// ServeDashboardJS serves dashboard.js
+func ServeDashboardJS(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/javascript")
+	http.ServeFile(w, r, "web/dashboard/dashboard.js")
+}

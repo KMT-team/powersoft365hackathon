@@ -67,6 +67,7 @@ func main() {
 	http.HandleFunc("/styles.css", handlers.ServeCSS)
 	http.HandleFunc("/login.js", handlers.ServeJS)
 	http.HandleFunc("/dashboard.html", handlers.ServeDashboard)
+	http.HandleFunc("/dashboard.js", handlers.ServeDashboardJS)
 
 	// Serve files under /web/ directly from the repo's web/ folder
 	http.Handle("/web/", http.StripPrefix("/web/", http.FileServer(http.Dir("web/"))))

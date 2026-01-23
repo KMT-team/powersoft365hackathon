@@ -3,6 +3,7 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
+	"log"
 	"net/http"
 	"regexp"
 	"time"
@@ -240,15 +241,19 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) {
 
 // HandleLogout ends session
 func HandleLogout(w http.ResponseWriter, r *http.Request) {
+	log.Println("Logout handler called")
 	if r.Method != http.MethodPost {
+		log.Println("Logout: Method not allowed", r.Method)
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 	cookie, err := r.Cookie("session")
 	if err != nil {
+		log.Println("Logout: No session cookie")
 		http.Error(w, "Not authenticated", http.StatusUnauthorized)
 		return
 	}
+	log.Println("Logout: Deleting session", cookie.Value)
 	_ = DeleteSession(cookie.Value)
 	http.SetCookie(w, &http.Cookie{
 		Name:   "session",
@@ -258,6 +263,7 @@ func HandleLogout(w http.ResponseWriter, r *http.Request) {
 	})
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{"message": "logged out"})
+	log.Println("Logout: Success response sent")
 }
 
 // HandleGuestLogin creates guest session

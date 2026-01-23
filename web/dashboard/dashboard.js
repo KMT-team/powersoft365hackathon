@@ -25,12 +25,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (logoutBtn) {
         logoutBtn.addEventListener("click", async (e) => {
             e.preventDefault();
+            console.log("Logout clicked");
             try {
-                await fetch('/api/logout', {
+                console.log("Fetching /api/logout...");
+                const res = await fetch('/api/logout', {
                     method: 'POST',
                     credentials: 'include'
                 });
+                console.log("Logout response status:", res.status);
                 // Redirect to home after logout
+                console.log("Redirecting to /...");
                 window.location.href = "/";
             } catch (error) {
                 console.error('Logout error:', error);
