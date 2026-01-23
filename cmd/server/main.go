@@ -71,6 +71,7 @@ func main() {
 	// Serve files under /web/ directly from the repo's web/ folder
 	http.Handle("/web/", http.StripPrefix("/web/", http.FileServer(http.Dir("web/"))))
 	http.HandleFunc("/classroom/", handlers.ServeClassroom)
+	http.Handle("/exercises/", http.StripPrefix("/exercises/", http.FileServer(http.Dir("web/exercises"))))
 
 	// (Katerina) ADDED: API routes - handle authentication logic
 	http.HandleFunc("/api/register", handlers.HandleRegister)
