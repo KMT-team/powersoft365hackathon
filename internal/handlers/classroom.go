@@ -42,7 +42,7 @@ func ServeClassroom(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.URL.Path == "/classroom" || r.URL.Path == "/classroom/" {
-		http.ServeFile(w, r, "web/classroom/classroom.html")
+		http.ServeFile(w, r, "web/classroom/index.html")
 		return
 	}
 

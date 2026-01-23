@@ -95,6 +95,8 @@ body {
   overflow-y: scroll;
 }
 
+
+
 /* ========== RESIZABLE DIVIDERS ========== */
 .resizable-divider {
   background: var(--card-border);
