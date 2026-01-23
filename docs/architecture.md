@@ -1,26 +1,50 @@
 # Architecture
 
+## Business Context
+
+Learnflowy addresses a critical retail/hospitality challenge: **expensive and time-consuming ERP training**. Traditional methods require dedicated trainers, lengthy sessions, and repeated practice. Our interactive simulation platform reduces onboarding time through gamified, self-paced learning with AI coaching.
+
 ## System Overview
 
 ```
-Browser → Go Server → PostgreSQL
-              ↓
-         Google Gemini API
+┌─────────┐      ┌───────────┐      ┌────────────┐
+│ Browser │ ───> │ Go Server │ ───> │ PostgreSQL │
+└─────────┘      └─────┬─────┘      └────────────┘
+                       │
+                       ▼
+               ┌───────────────┐
+               │ Gemini 3 API  │
+               └───────────────┘
 ```
 
 ## Tech Stack
 
 - **Backend:** Go (routing, auth, AI)
-- **Database:** PostgreSQL (users, sessions)
+- **Database:** PostgreSQL (users, sessions, progress)
 - **Frontend:** JS, CSS (no frameworks), HTML
-- **AI:** Google Gemini 1.5 Flash
+- **AI:** Google Gemini 3 Flash Preview
 
 ## Request Flow
 
-**Landing:** `GET /` → `web/pre-login/index.html`  
-**Login:** `POST /api/login` → verify password → create session → set cookie  
-**Classroom:** `GET /classroom/` → check session → serve interface  
-**AI Chat:** `POST /api/chat` → Gemini API → stream response  
+```
+Landing ──> Login ──> Dashboard ──> Classroom ──> AI Chat
+  GET /     POST        GET           GET           POST
+            /api/login  /dashboard    /classroom    /api/chat
+```
+
+## Learning Progression
+
+```
+┌────────────┐    ┌────────────┐         ┌────────────┐
+│ Exercise 1 │ -> │ Exercise 2 │ -> ... ->│ Exercise 5 │
+│  (Basic)   │    │            │         │ (Advanced) │
+└──────┬─────┘    └────────────┘         └──────┬─────┘
+       │                                         │
+       ▼                                         ▼
+  Hints + AI                              Completion
+```
+
+Progress tracked in localStorage, AI adapts coaching based on inventory context and exercise difficulty.
 
 ## Data Storage
 
@@ -31,7 +55,7 @@ Browser → Go Server → PostgreSQL
 **Client (localStorage):**
 - Theme preference
 - Inventory state
-- Exercise progress
+- Exercise progress (completion tracking)
 
 ## Security
 
@@ -42,14 +66,18 @@ Browser → Go Server → PostgreSQL
 ## File Structure
 
 ```
-cmd/server/main.go       # Entry point
-internal/handlers/       # Auth, classroom, chat
-internal/ai/            # Prompt engineering
-web/
-  ├── pre-login/        # Landing page
-  ├── login/            # Auth UI
-  ├── classroom/        # Simulator
-  ├── exercises/        # Exercise engine
-  └── styles.css        # Global theme
-migrations/             # Database schema
+cmd
+  └─ server
+       └─ main.go              # Entry point
+internal
+  ├─ handlers                  # Auth, classroom, chat
+  └─ ai                        # Prompt engineering
+web
+  ├─ pre-login                 # Landing page
+  ├─ login                     # Auth UI
+  ├─ classroom                 # Simulator
+  ├─ exercises                 # Exercise engine
+  └─ styles.css                # Global theme
+migrations                     # Database schema
+assets                         # Images and logos
 ```

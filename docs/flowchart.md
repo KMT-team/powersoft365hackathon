@@ -1,48 +1,67 @@
-# Application Flow
+# User Journey
 
-## User Journey
+## Learning Path
 
 ```
-Landing (/) → Login (/login) → Dashboard → Classroom (/classroom/)
+┌─────────┐    ┌───────┐    ┌───────────┐    ┌─────────────┐
+│ Landing │ -> │ Login │ -> │ Dashboard │ -> │  Classroom  │
+└─────────┘    └───────┘    └───────────┘    └──────┬──────┘
+                                                     │
+                                                     ▼
+                              ┌──────────────────────────────────┐
+                              │  Exercise 1 -> 2 -> 3 -> 4 -> 5  │
+                              └────────────┬─────────────────────┘
+                                           │
+                                           ▼
+                                      Completion
 ```
 
 ## Authentication Flow
 
-**Register:**
 ```
-User submits form → Validate input → Hash password (bcrypt)
-→ Insert user → Create session → Set cookie → Success
+┌──────────────┐    ┌──────────┐    ┌──────────┐    ┌─────────┐
+│ Register/    │ -> │ Validate │ -> │  Create  │ -> │ Redirect│
+│ Login Form   │    │  Input   │    │  Session │    │         │
+└──────────────┘    └──────────┘    └──────────┘    └─────────┘
+
+┌──────────────┐    ┌──────────┐    ┌──────────┐
+│ Guest Mode   │ -> │  Reuse   │ -> │  Clear   │
+│ Click        │    │  Account │    │  Storage │
+└──────────────┘    └──────────┘    └──────────┘
 ```
 
-**Login:**
+## Learning Experience
+
+**Exercise Progression:**
 ```
-User submits credentials → Find user → Verify password
-→ Create/reuse session → Set cookie → Success
+┌───────┐   ┌──────────┐   ┌──────────┐   ┌──────────┐   ┌──────────┐
+│ Start │-> │ Load Ex. │-> │ Practice │-> │ Validate │-> │ Complete │
+└───────┘   └──────────┘   └──────────┘   └──────────┘   └──────────┘
+                                │                              │
+                                ▼                              ▼
+                           Hints (optional)              Unlock Next
 ```
 
-**Guest:**
-```
-Click guest → Create/reuse guest@system.local
-→ Create session → Set cookie → Clear localStorage
-```
+**Gamification Elements:**
+- Progressive difficulty (5 exercises)
+- Completion tracking (localStorage)
+- Hint system for struggling users
+- Real-time validation feedback
+- Exercise prerequisites (sequential unlocking)
 
-## Exercise Flow
-
-```
-User clicks Start → Check prerequisites → Load exercise
-→ Show hints (if enabled) → User performs actions
-→ Validate every 1s → Complete → Increment counter → Return to list
-```
-
-## AI Chat Flow
+## AI Coaching Flow
 
 ```
-User types message → POST /api/chat with inventory context
-→ Build system prompt (mode-specific) → Call Gemini API
-→ Stream response chunks (SSE) → Display in chat bubble
+┌─────────────┐   ┌──────────────┐   ┌─────────────┐   ┌──────────┐
+│ User types  │-> │ POST /api/   │-> │ Gemini API  │-> │ Stream   │
+│ message     │   │  chat with:  │   │ generates   │   │ response │
+│             │   │ - Mode       │   │ adaptive    │   │ via SSE  │
+│             │   │ - Inventory  │   │ response    │   │          │
+│             │   │ - Context    │   │             │   │          │
+└─────────────┘   └──────────────┘   └─────────────┘   └──────────┘
 ```
 
 ## Data Persistence
 
-**Server:** Users, sessions (PostgreSQL)
-**Client:** Theme, inventory, exercises (localStorage)
+**Server (PostgreSQL):** Users, sessions  
+**Client (localStorage):** Theme, inventory state, exercise progress, completion status

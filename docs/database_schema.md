@@ -25,6 +25,20 @@ created_at TIMESTAMPTZ DEFAULT now()
 
 `users (1) ──< (N) sessions`
 
+## Data Storage Strategy
+
+**PostgreSQL (Server-side):**
+- User credentials (security-critical)
+- Session management (server-controlled expiry)
+
+**localStorage (Client-side):**
+- Exercise progress (fast access, no server load)
+- Inventory state (real-time updates)
+- Theme preferences (instant UI response)
+- Completion tracking (persists between sessions)
+
+**Rationale:** Client-side storage enables faster interactions and reduces server load for non-critical data. Requires internet connection for initial load and AI features. User authentication remains server-controlled for security.
+
 ## Key Queries
 
 **Create user:**
@@ -39,11 +53,16 @@ JOIN users u ON s.user_id = u.id
 WHERE s.id = $1 AND s.expires_at > now();
 ```
 
-**Delete session:**
+**Delete session (logout):**
 ```sql
 DELETE FROM sessions WHERE id = $1;
 ```
 
+**Clean expired sessions:**
+```sql
+DELETE FROM sessions WHERE expires_at < now();
+```
+
 ## Migration
 
-Auto-applied on server start via `migrations/001_create_tables.sql`
+Auto-applied on server start via `migrations/001_create_tables.sql`.
