@@ -556,6 +556,10 @@ document.addEventListener('DOMContentLoaded', () => {
             closeModal(elements.editVariantModal);
         }
 
+        if (t.id === 'sim-btn-return-dashboard') {
+            window.location.href = '/dashboard.html';
+        }
+
         if (t.classList.contains('sell-btn')) {
             const pid = parseInt(t.dataset.id);
             const vi = parseInt(t.dataset.variant);
