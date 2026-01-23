@@ -16,11 +16,9 @@ document.addEventListener("DOMContentLoaded", () => {
   function updateThemeIcon() {
     const isLight = document.documentElement.getAttribute("data-theme") === "light";
     if (isLight) {
-      themeIcon.classList.remove("fa-moon");
-      themeIcon.classList.add("fa-sun");
+      themeIcon.className = "fa-solid fa-lightbulb";
     } else {
-      themeIcon.classList.remove("fa-sun");
-      themeIcon.classList.add("fa-moon");
+      themeIcon.className = "fa-solid fa-moon";
     }
   }
 

@@ -25,11 +25,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const isLight = document.documentElement.getAttribute("data-theme") === "light";
         if (!themeIcon) return;
         if (isLight) {
-            themeIcon.classList.remove("fa-moon");
-            themeIcon.classList.add("fa-sun");
+            themeIcon.className = "fa-solid fa-lightbulb";
         } else {
-            themeIcon.classList.remove("fa-sun");
-            themeIcon.classList.add("fa-moon");
+            themeIcon.className = "fa-solid fa-moon";
         }
     }
 
@@ -67,4 +65,46 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     initTheme();
+
+    // Sidebar Navigation
+    const navItems = document.querySelectorAll(".sidebar-nav .nav-item");
+    const pageTitle = document.getElementById("page-title");
+
+    navItems.forEach(item => {
+        item.addEventListener("click", (e) => {
+            e.preventDefault();
+            navItems.forEach(nav => nav.classList.remove("active"));
+            item.classList.add("active");
+
+            // Update Title based on company
+            const companyName = item.querySelector("span").innerText;
+            pageTitle.innerText = `Explore Simulations - ${companyName}`;
+
+            // Optional: You could shuffle cards here or filter them to simulate different data
+        });
+    });
+
+    // Card Details Toggle Logic
+    const infoBtns = document.querySelectorAll(".info-btn");
+
+    infoBtns.forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const card = btn.closest(".flow-card");
+
+            // Toggle the show-details class
+            card.classList.toggle("show-details");
+
+            // Optional: Toggle icon state?
+            const icon = btn.querySelector("i");
+            if (card.classList.contains("show-details")) {
+                icon.classList.remove("fa-circle-info");
+                icon.classList.add("fa-circle-xmark");
+            } else {
+                icon.classList.remove("fa-circle-xmark");
+                icon.classList.add("fa-circle-info");
+            }
+        });
+    });
 });

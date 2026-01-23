@@ -1109,14 +1109,15 @@ a:hover {
 
 #theme-toggle,
 #home-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
   border: 1px solid var(--control-border);
   background: color-mix(in srgb, var(--input-surface) 60%, transparent);
   color: var(--text);
   display: grid;
   place-items: center;
+  font-size: 14px;
   transition: all 0.2s ease;
   cursor: pointer;
   position: static;
@@ -1697,6 +1698,7 @@ input.error-input {
 
   .who-plain-image {
     max-width: 600px;
+    transform: scale(1.25) translateX(-20px);
   }
 
   .who-right {
@@ -1704,13 +1706,7 @@ input.error-input {
     width: 100%;
   }
 
-  .app-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .sidebar {
-    display: none;
-  }
+  /* Sidebar remains visible on tablet now */
 }
 
 /* Progress Bar */
@@ -1746,6 +1742,16 @@ input.error-input {
 
 /* Mobile */
 @media (max-width: 600px) {
+  .app-layout {
+    grid-template-columns: 1fr;
+    height: auto;
+    display: block;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
   body.landing {
     padding: 20px 16px 60px;
   }
@@ -1788,6 +1794,7 @@ input.error-input {
     white-space: normal;
     font-size: 36px;
   }
+
 
   .hero-sub {
     margin: 0 auto;
@@ -1875,4 +1882,127 @@ input.error-input {
     flex-direction: column;
     gap: 16px;
   }
+}
+
+
+
+/* --- Card Details Toggle --- */
+.card-details {
+  display: none;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  padding-top: 12px;
+  animation: fadeIn 0.3s ease;
+}
+
+.flow-card.show-details .card-actions {
+  display: none;
+}
+
+.flow-card.show-details .card-details {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- Completion Badges --- */
+.badge-container {
+  position: absolute;
+  top: 32px;
+  right: 32px;
+  display: flex;
+  gap: 6px;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.badge {
+  width: 28px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  font-size: 13px;
+  color: #333;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .badge {
+  background: rgba(40, 40, 40, 0.9);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.flow-card:hover .badge {
+  transform: scale(1.15) rotate(5deg);
+}
+
+.badge--lime {
+  color: #84cc16;
+  background: #f7fee7;
+  border-color: #d9f99d;
+}
+
+[data-theme="dark"] .badge--lime {
+  background: rgba(132, 204, 22, 0.2);
+  color: #a3e635;
+  border-color: rgba(132, 204, 22, 0.3);
+}
+
+.badge--trophy {
+  color: #eab308;
+  background: #fefce8;
+  border-color: #fef08a;
+}
+
+[data-theme="dark"] .badge--trophy {
+  background: rgba(234, 179, 8, 0.2);
+  color: #facc15;
+  border-color: rgba(234, 179, 8, 0.3);
+}
+
+.badge--fire {
+  color: #f97316;
+  background: #fff7ed;
+  border-color: #ffedd5;
+}
+
+[data-theme="dark"] .badge--fire {
+  background: rgba(249, 115, 22, 0.2);
+  color: #fb923c;
+  border-color: rgba(249, 115, 22, 0.3);
+}
+
+/* Completed Button Style */
+.completed-btn {
+  background: var(--button-bg-secondary, #e5e7eb);
+  /* Subtle Check bg */
+  color: var(--text-secondary);
+  cursor: default;
+  border-color: transparent;
+}
+
+.completed-btn:hover {
+  background: var(--button-bg-secondary, #e5e7eb);
+  transform: none;
+}
+
+[data-theme="dark"] .completed-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.6);
 }
